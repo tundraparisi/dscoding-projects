@@ -1,0 +1,82 @@
+Jupyter notebook
+the number [n] the order of command we execute
+MARKDOWN
+# title
+- list
+&& to write mathematical expression 
+
+fast typing 
+not for: to write a real program
+importing from the python file for demonstration 
+
+python.py
+
+RUNNING PROGRAM 
+1. Designing the program
+game BLACKJACK
+A PLAYER and A DEALER
+52 cards: 
+	beginning: both have some cards (2 cards for each)
+	the PLAYER can HIT (recieve another card) or STOP (final score)
+	if the score over 21, the game stop and the PLAYER lose
+	if the score is equal or lower than 21 -> stay, then check the score of the dealer
+		if the score of the DEALER is lower than 17 -> HIT
+		if lower than 17 > stay
+	then compare the scores of the two  
+
+2. How to implement
+DATA STRUCTURE + ALGORITHM 
+for example: data organization + set of command on those data
+what is the best choice for each tyoe of program?
+
+COMPLETE A LIST
+- A deck of cards
+	52 cards
+	each card we have a value 
+	ACE = 1, 11 (this case always 11)
+	2-10 = nominal
+	J, Q, K = 10 
+	HEART, SPADES, DIAMOND, C
+--> THE CARD IS A COMBINATION OF THE VALUES
+
+deck = [] # to create t a set of the deck 
+seeds = ['S', 'H', 'C', 'D'] #or seeds = "S C H D".split()
+values = [str(x) for x in range(2,11)] + ['A', 'J','Q', 'K'] #transform the int to string in the list
+for value in values:
+    for seed in seeds:
+        print(value, seed)
+
+
+The data structure 
+List (order collection od data
+	a=[2,3,4,2,'a',12]
+	a.append(12)
+	a[1] to indexing 
+	a[len(a)-1] refer to the last element of the list
+	a[-1]
+	a[2:6] the slice or a[2:len(a)]
+		=[4,2,'a',12]
+	a[:6]
+	a[2:-1] the 3rd elemtn to the elemetn before the last
+	a[-1:2] return nothing 
+	a[4] = [2,3,4] return [2,3,4,2,[2,3,4],12]
+	s = "this is a string"
+		s[3:12] return 
+	s[4] return nothing
+3 ways to create list
+1/ tradional
+2/ name a list and append
+3/ look in the JUPYTER NOTEBOOK on 6/10/23 (list comprehension)
+dot method 
+DIc
+Set
+Tuples 
+- A PLAYER and A DEALER
+
+use pycharm to save the function outside the notebook
+
+import the function from pycharm to notebook
+from blackjack.utils import create_deck (#folder in the pycharm) 
+
+deck = create_deck
+print(deck)
