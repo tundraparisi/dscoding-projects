@@ -1,5 +1,5 @@
 
 # Project "Quiz"
 
-This ReadME describes development process of project "Quiz"
+This README file describes development process of project "Quiz".
 
