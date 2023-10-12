@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "tommaso-premoli"
+version = "0.1.0"
+description = ""
+authors = ["tommipremoli <tommaso.premoli@studenti.unimi.it>"]
+readme = "README.md"
+packages = [{include = "tommaso"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
