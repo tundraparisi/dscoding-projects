@@ -1,12 +1,13 @@
 [tool.poetry]
-name = "bea-project"
+name = "project"
 version = "0.1.0"
 description = ""
-authors = ["beaclavarino <beaclavarino@gmail.com>"]
+authors = ["Niccolo901 <niccolo.cibei@studenti.unimi.it>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
+
 
 [build-system]
 requires = ["poetry-core"]
