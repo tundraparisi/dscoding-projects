@@ -1,4 +1,4 @@
 import pandas as pd
 
-x = pd.read_csv('data/.csv', sep=',')  # the sep attribute define the separating symbol
+x = pd.read_csv('data/mc.csv', sep=',')
 print(x)
