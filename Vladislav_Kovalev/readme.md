@@ -15,7 +15,7 @@ The program must calculate the allocation of customers at hotels, considering th
 The program must implement four different allocation strategies:
 
 - random: customers are randomly distributed to the rooms until the seats or customers are exhausted;
-customer preference: customers are served in order of reservation (the customer number indicates the order) and are allocated to the hotel based on their preference, until the seats or customers are exhausted;
+- customer preference: customers are served in order of reservation (the customer number indicates the order) and are allocated to the hotel based on their preference, until the seats or customers are exhausted;
 - price: the places in the hotel are distributed in order of price, starting with the cheapest hotel and following in order of reservation and preference until the places or customers are exhausted;
 - availability: places in hotels are distributed in order of room availability, starting with the most roomy hotel and subordinately in order of reservation and preference until places or clients are exhausted.
 
