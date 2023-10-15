@@ -1,1 +1,0 @@
-RANDOM: customers are randomly distributed to the rooms until the seats or customers are exhausted; customer preference: customers are served in order of reservation (the customer number indicates the order) and are allocated to the hotel based on their preference, until the seats or customers are exhausted;
