@@ -9,7 +9,6 @@ from first_strategy.tools.creation.create_available_rooms import create_availabl
 def first_strategy_main(
     *,
     dataHotels,
-    dataPreferences,
     dataGuests,
 ) -> pd.DataFrame:
     """
@@ -34,7 +33,6 @@ def first_strategy_main(
     availableRoomsDict = create_available_rooms(
         dataHotels=dataHotels,
     )
-    random_choice_key_dict(dictionaryForChoice=availableRoomsDict)
 
     guests = dataGuests["guest"].drop_duplicates()
     for guest in guests:
@@ -44,7 +42,9 @@ def first_strategy_main(
             dictionaryForUpdate=availableRoomsDict,
             keyDecrement=hotelForGuest,
         )
+
     resultFrame = pd.DataFrame.from_dict(
         {"guest": list(resultDict.keys()), "hotel": list(resultDict.values())}
     )
+
     return resultFrame
