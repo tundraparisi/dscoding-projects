@@ -60,7 +60,7 @@ vladislavkovalev@Vladislavs-Air vladislav_kovalev %
 
 ### Plot the streamlit report
 vladislavkovalev@Vladislavs-Air vladislav_kovalev % streamlit run ./results_tools/report_display/streamlit_display.py
-=======
+
 vladislavkovalev@Vladislavs-MacBook-Air dscoding-projects % python3 ./vladislav_kovalev/main.py \
 WARNING:root:Start 1 strategy calculating \
 WARNING:root:Calculating is completed \
