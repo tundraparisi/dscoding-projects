@@ -20,3 +20,17 @@ The program must implement four different allocation strategies:
 - availability: places in hotels are distributed in order of room availability, starting with the most roomy hotel and subordinately in order of reservation and preference until places or clients are exhausted.
 
 Finally, the program must present and display a report of the result obtained, showing for each strategy the number of customers accommodated, the number of rooms occupied, the number of different hotels occupied, the total volume of business (total earnings of each hotel), and the degree of customer satisfaction (calculated according to the location of the hotel assigned to them with respect to their preferences).
+
+## Execution
+vladislavkovalev@Vladislavs-MacBook-Air dscoding-projects % python3 ./vladislav_kovalev/main.py
+WARNING:root:Start 1 strategy calculating
+WARNING:root:Calculating is completed
+WARNING:root:Start 2 strategy calculating
+WARNING:root:Calculating is completed
+WARNING:root:Start 3 strategy calculating
+WARNING:root:Calculating is completed
+WARNING:root:Start 4 strategy calculating
+WARNING:root:Calculating is completed
+WARNING:root:Construct and save resulting files
+WARNING:root:Script competed
+vladislavkovalev@Vladislavs-MacBook-Air dscoding-projects % 
