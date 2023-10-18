@@ -1,19 +1,22 @@
 import pandas as pd
-from first_strategy.tools.decrement.decrement_dictionary_with_deletion import (
+from strategies.first_strategy.tools.decrement.decrement_dictionary_with_deletion import (
     decrement_dictionary_with_deletion,
 )
-from first_strategy.tools.creation.create_available_rooms import create_available_rooms
-from second_strategy.tools.choice.preference_choice_key_dict import (
+from strategies.first_strategy.tools.creation.create_available_rooms import (
+    create_available_rooms,
+)
+from strategies.second_strategy.tools.choice.preference_choice_key_dict import (
     preference_choice_key_dict,
 )
-from second_strategy.tools.creation.create_guests_query import create_guests_query
+from strategies.second_strategy.tools.creation.create_guests_query import (
+    create_guests_query,
+)
 
 
 def second_strategy_main(
     *,
     dataHotels,
     dataPreferences,
-    dataGuests,
 ) -> pd.DataFrame:
     """
     Calculation of main locations frame for second strategy
@@ -24,8 +27,6 @@ def second_strategy_main(
         dataframe of hotels and rooms
     dataPreferences: str
         dataframe of preferences
-    dataGuests: pd.DataFrame
-        dataframe of guests
 
     Returns
     -------
