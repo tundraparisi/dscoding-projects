@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from strategies.first_strategy.first_strategy_main import first_strategy_main
 from strategies.second_strategy.second_strategy_main import second_strategy_main
@@ -14,6 +15,7 @@ from utils import (
     fourthStrategyPath,
 )
 
+
 if __name__ == "__main__":
     # read the data
     dataHotels = pd.read_excel(dataHotelsPath)
@@ -21,33 +23,42 @@ if __name__ == "__main__":
     dataPreferences = pd.read_excel(dataPreferencesPath)
 
     # random: customers are randomly distributed to the rooms until the seats or customers are exhausted;
+    logging.warning("Start 1 strategy calculating")
     resultFrameFirstStrategy = first_strategy_main(
         dataHotels=dataHotels,
         dataGuests=dataGuests,
     )
+    logging.warning("Calculating is completed")
 
     # customer preference: customers are served in order of reservation (the customer number indicates the order)
     # and are allocated to the hotel based on their preference, until the seats or customers are exhausted;
+    logging.warning("Start 2 strategy calculating")
     resultFrameSecondStrategy = second_strategy_main(
         dataHotels=dataHotels,
         dataPreferences=dataPreferences,
     )
+    logging.warning("Calculating is completed")
 
     # price: the places in the hotel are distributed in order of price, starting with the cheapest hotel
     # and following in order of reservation and preference until the places or customers are exhausted;
+    logging.warning("Start 3 strategy calculating")
     resultFrameThirdStrategy = third_strategy_main(
         dataHotels=dataHotels,
         dataPreferences=dataPreferences,
     )
+    logging.warning("Calculating is completed")
 
     # vailability: places in hotels are distributed in order of room availability, starting with
     # the most roomy hotel and subordinately in order of reservation and preference
     # until places or clients are exhausted.
+    logging.warning("Start 4 strategy calculating")
     resultFrameFourthStrategy = fourth_strategy_main(
         dataHotels=dataHotels,
         dataPreferences=dataPreferences,
     )
+    logging.warning("Calculating is completed")
 
+    logging.warning("Construct and save resulting files")
     for resultFrame, resultPath in zip(
         [
             resultFrameFirstStrategy,
@@ -65,7 +76,6 @@ if __name__ == "__main__":
         resultFrameSave = construct_result(
             dataHotels=dataHotels,
             dataGuests=dataGuests,
-            dataPreferences=dataPreferences,
             resultFrame=resultFrame,
         )
 
@@ -73,3 +83,4 @@ if __name__ == "__main__":
             resultPath,
             index=False,
         )
+    logging.warning("Script competed")
