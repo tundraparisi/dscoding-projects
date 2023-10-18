@@ -24,8 +24,8 @@ def construct_result(
     pd.DataFrame
         DataFrame with guests, prices and hotels
     """
-    resultFrame = resultFrame.merge(dataGuests[["guest", "discount"]])
-    resultFrame = resultFrame.merge(dataHotels[["hotel", "price"]])
+    resultFrame = resultFrame.merge(dataGuests[["guest", "discount"]], how="left")
+    resultFrame = resultFrame.merge(dataHotels[["hotel", "price"]], how="left")
 
     resultFrame.columns = [nameColumn.upper() for nameColumn in resultFrame.columns]
     resultFrame["NETTO"] = resultFrame["PRICE"] * (1 - resultFrame["DISCOUNT"])

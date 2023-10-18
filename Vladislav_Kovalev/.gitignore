@@ -1,6 +1,7 @@
 # Custom ignore
 hotels/
 test/
+results_tools/report_display/results/ 
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

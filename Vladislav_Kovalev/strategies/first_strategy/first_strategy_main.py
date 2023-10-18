@@ -1,15 +1,18 @@
 import pandas as pd
-from first_strategy.tools.decrement.decrement_dictionary_with_deletion import (
+from strategies.first_strategy.tools.decrement.decrement_dictionary_with_deletion import (
     decrement_dictionary_with_deletion,
 )
-from first_strategy.tools.random.random_choice_key_dict import random_choice_key_dict
-from first_strategy.tools.creation.create_available_rooms import create_available_rooms
+from strategies.first_strategy.tools.random.random_choice_key_dict import (
+    random_choice_key_dict,
+)
+from strategies.first_strategy.tools.creation.create_available_rooms import (
+    create_available_rooms,
+)
 
 
 def first_strategy_main(
     *,
     dataHotels,
-    dataPreferences,
     dataGuests,
 ) -> pd.DataFrame:
     """
@@ -19,8 +22,6 @@ def first_strategy_main(
     ----------
     dataHotels: pd.DataFrame
         dataframe of hotels and rooms
-    dataPreferences: str
-        dataframe of preferences
     dataGuests: pd.DataFrame
         dataframe of guests
 
@@ -34,7 +35,6 @@ def first_strategy_main(
     availableRoomsDict = create_available_rooms(
         dataHotels=dataHotels,
     )
-    random_choice_key_dict(dictionaryForChoice=availableRoomsDict)
 
     guests = dataGuests["guest"].drop_duplicates()
     for guest in guests:
@@ -44,7 +44,9 @@ def first_strategy_main(
             dictionaryForUpdate=availableRoomsDict,
             keyDecrement=hotelForGuest,
         )
+
     resultFrame = pd.DataFrame.from_dict(
         {"guest": list(resultDict.keys()), "hotel": list(resultDict.values())}
     )
+
     return resultFrame
