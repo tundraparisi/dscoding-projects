@@ -17,6 +17,20 @@ from utils import (
 
 
 if __name__ == "__main__":
+    """
+    The program must calculate the allocation of customers at hotels,
+    considering the number of available rooms, the fact that each customer
+    occupies exactly one room, and that each stay lasts only one night.
+    The price paid by the customer is the unit price of the room discounted
+    by the fraction of the discount to which the customer is entitled.
+    """
+    # logging config
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
+        datefmt="%m/%d/%Y %H:%M:%S",
+        level=logging.INFO,
+    )
+
     # read the data
     dataHotels = pd.read_excel(dataHotelsPath)
     dataGuests = pd.read_excel(dataGuestsPath)
@@ -79,8 +93,22 @@ if __name__ == "__main__":
             resultFrame=resultFrame,
         )
 
+        # Merge priority
+        resultFrameSave = (
+            resultFrameSave.merge(
+                dataPreferences[["guest", "hotel", "priority"]],
+                how="left",
+                left_on=["GUEST", "HOTEL"],
+                right_on=["guest", "hotel"],
+            )
+            .drop(columns=["guest", "hotel"])
+            .drop_duplicates("GUEST", keep="first")
+        )
+
+        resultFrameSave = resultFrameSave.rename({"priority": "PRIORITY"}, axis=1)
+
         resultFrameSave.to_excel(
             resultPath,
             index=False,
         )
-    logging.warning("Script competed")
+    logging.warning("Script completed")
