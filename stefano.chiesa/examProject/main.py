@@ -12,3 +12,4 @@ gtfp_dataframe = geopandas.GeoDataFrame(
     tem_dataframe, geometry=geopandas.points_from_xy(tem_dataframe.Longitude, tem_dataframe.Latitude)
 )
 print(gtfp_dataframe.head())
+
