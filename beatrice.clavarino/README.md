@@ -1,4 +1,5 @@
-Weather project
+## Weather project
+
 The project will need to provide an effective graphical visualization of the change in temperatures over time in major cities around the world since 1750.
 It will highlight the cities where the largest temperature ranges were recorded during different historical periods. 
 
