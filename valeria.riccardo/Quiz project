@@ -1,0 +1,25 @@
+import numpy as np
+easy_keys = ("In which of this movies Leonardo Di Caprio is the main character?:",
+             "When was 'A Clockwork Orange' released?:", 
+             "The Cabinet of Doctor Caligari belongs to which one of the following movement?:"
+)  #tuple convertito in dictionary, chiave
+
+easy_values = (("A. Inception", "B. John Wick", "C. Avatar ", "D. The Lord of the Rings"), 
+           ("A. 1969", "B. 2001", "C. 1971", "D. 1982"), 
+           ("A. Nouvelle Vague", "B. Neorealism", "C. Expressionism", "D. Surrealism")
+)  #tuple convertito nei valori delle keys
+easy_right_answers = ("A", "C", "C") #third tuple. Imported as well 
+your_answers = []
+score = 0
+question_num = 0
+your_level = ("easy", "difficult")
+
+#1. Data structure, create a dictionary of association between the questions and the option. 
+easy_questions = dict(zip(easy_keys, easy_values))
+print(easy_questions)
+#1.2 I need different dictionaries, let's say 9 with the questions in different order. In order to achieve it, I have to convert the keys in a list. 
+a1 = list(easy_questions.items())
+np.random.shuffle(a1)
+a = dict(a1)
+print(a)
+#shuffling function to set
