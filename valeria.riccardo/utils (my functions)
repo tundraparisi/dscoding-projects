@@ -1,0 +1,18 @@
+
+def play():
+    for question in easy: #pick a question
+          print(question["question"]) #related to the dictionary key where the questions are
+          for option in question["options"]: #pick the corrispective option 
+              print(option)
+    print()
+    #user must insert the answer
+    reply = input("Enter your answer: ").upper #in the dictionaries, replies are all in capital letters. So I can accept all the replies
+    your_answers.append(reply) #get the reply stored in the list your_answer so to compute the score in the end
+    #checking the correct answer:
+    if reply == question["correct"]:
+        print("Your answer is correct! Very good!")
+        #scoring to develop
+    else:
+        print("Your answer is not correct! :(")
+
+play()

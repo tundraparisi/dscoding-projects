@@ -1,0 +1,20 @@
+#1. Data structure: list of dictionaries
+import numpy as np
+easy = [{"question": "In which of this movies Leonardo Di Caprio is the main character?:", 
+         "options": ["A. Inception", "B. John Wick", "C. Avatar ", "D. The Lord of the Rings"], 
+         "correct": "A"}, 
+        {"question": "When was 'A Clockwork Orange' released?:", 
+         "options": ["A. 1969", "B. 2001", "C. 1971", "D. 1982"],
+         "correct": "C"}, 
+        {"question": "The Cabinet of Doctor Caligari belongs to which one of the following movement?:",
+         "options": ["A. Nouvelle Vague", "B. Neorealism", "C. Expressionism", "D. Surrealism"],
+         "correct": "C"},
+]
+
+your_answers = []
+score = 0
+question_num = 0
+your_level = ("easy", "difficult")
+
+
+print(np.random.choice(easy, 3, replace=False))
