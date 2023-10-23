@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "myproject"
 version = "0.1.0"
-description = ""
-authors = ["lucasangio01 <146674237+lucasangio01@users.noreply.github.com>"]
+description = "Project for the DS coding class"
+authors = ["lucasangio01 <luca.sangiovanni.2001@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11.6"
 
 
 [build-system]
