@@ -16,20 +16,23 @@ class CISIData:
     def documents(self):
         data = self._import_data(self.path + "CISI.ALL")
         raw_docs = [
-            re.split(r"\.I |\.T |\.A |\.W |\.X ", d.replace("\n", " "))
+            re.split(r"\.I\n|\.T\n|\.A\n|\.W\n|\.X\n|\n.T +\n|\n.A +\n|\n.W +\n", d)
             for d in data.split(".I ")
             if d
         ]
         docs = []
         for d in raw_docs:
+            d = [s.replace('\n', '') for s in d]
+            if len(d) != 5:
+                d[2] = ' '.join(d[2:len(d)-2]).replace('\n', '')
             docs.append(
                 {
                     "id": int(d[0]),
                     "title": d[1].strip(),
                     "author": d[2].strip(),
-                    "text": d[3].strip(),
+                    "text": d[-2].strip(),
                     "related_texts": [
-                        tuple(rel.split("\t")) for rel in d[4].split(" ") if rel
+                        tuple(rel.split("\t")) for rel in d[-1].split(" ") if rel
                     ],
                 }
             )
@@ -76,4 +79,5 @@ class CISIData:
         rels = [re.split(r"\s+", line) for line in raw_rels]
         rels = pd.DataFrame(rels, columns=["query", "document"])
         rels['query'] = rels['query'].astype(int)
+        rels['document'] = rels['document'].astype(int)
         return rels
