@@ -75,4 +75,5 @@ class CISIData:
         raw_rels = [line.split("\t")[0].strip() for line in data.splitlines()]
         rels = [re.split(r"\s+", line) for line in raw_rels]
         rels = pd.DataFrame(rels, columns=["query", "document"])
+        rels['query'] = rels['query'].astype(int)
         return rels
