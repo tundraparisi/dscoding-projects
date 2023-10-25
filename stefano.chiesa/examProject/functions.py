@@ -15,4 +15,3 @@ def convert(db, column):
 
     return db
 
-
