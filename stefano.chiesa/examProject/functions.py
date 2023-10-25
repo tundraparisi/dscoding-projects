@@ -41,20 +41,14 @@ def create_map_date(ds, dw, date):
 
 def create_map_gif(ds, dw, dates):
     fig, ax = plt.subplots(figsize=(20, 16))
+    axis = dw.plot(ax=ax, color='lightblue', edgecolor='black')
 
     def update(frame):
-        ax.clear()  # Clear the previous plot
         current_date = dates[frame]
-        axis = dw.plot(ax=ax, color='lightblue', edgecolor='black')
         filtered_cities = ds[ds['dt'] == current_date]
         scatter = filtered_cities.plot(column='AverageTemperature', ax=axis, markersize=80, legend=True, legend_kwds={'shrink': 0.3})
         plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=15)
         return scatter
 
     animation = FuncAnimation(fig, update, frames=len(dates), interval=250)
-
-    # Save the animation as a GIF file
-    try:
-        animation.save('temperature_animation.gif', fps=1)
-    except Exception as e:
-        print(f'Error: {e}')
+    animation.save('temperature_animation.gif', fps=1)
