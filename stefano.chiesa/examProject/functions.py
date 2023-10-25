@@ -15,3 +15,6 @@ def convert(db, column):
 
     return db
 
+def date_format(ds, column):
+    ds[column] = pd.to_datetime(ds[column])
+    return ds
