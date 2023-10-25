@@ -4,52 +4,20 @@ import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 tem_dataframe = pd.read_csv('venv/data/data_cities.csv', sep=',')  # import the data
 gpd_cities = gpd.GeoDataFrame(
-    tem_dataframe, geometry = gpd.points_from_xy(tem_dataframe.Longitude, tem_dataframe.Latitude)
+    tem_dataframe, geometry=gpd.points_from_xy(tem_dataframe.Longitude, tem_dataframe.Latitude)
 )
 # 'dt', 'AverageTemperature', 'City', 'Latitude', 'Longitude', 'geometry'
 
 
-
-
 # import a built-in dataset (deprecate from 2024)
 gpd_world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-# removing antartica
-gpd_world = gpd_world[gpd_world.name != "Antarctica"] # removing antartica
+# removing antarctica
+gpd_world = gpd_world[gpd_world.continent != "Antarctica"]  # removing antartica
 
+# fun.create_map_date(gpd_cities, gpd_world, '1990-01-01')
 
-
-create a world map
-axis = gpd_world.plot(color = 'lightblue', edgecolor = 'black')
-gpd_cities.plot(ax = axis, color = 'black', markersize = 5, legend = True)
-plt.title('World Major Cities', fontsize = 40)
-fig = plt.gcf()
-fig.set_size_inches(19.2,18.2)
-fig.savefig('matplotlib.png', dpi = 500, bbox_inches='tight')
-plt.show()
-
-
-# getting days
-days = gpd_cities['dt'].unique()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# dates = gpd_cities['dt'].unique()
+dates = ['1990-01-01', '1990-06-01', '1910-01-01', '1998-04-01']
+fun.create_map_gif(gpd_cities, gpd_world, dates)
