@@ -32,32 +32,29 @@ def create_map(ds, dw):
 
 
 def create_map_date(ds, dw, date):
-    ds = ds[ds['dt'] == date]
-    # getting days
-    days = ds['dt'].unique()
-    if date in days:
-        create_map(ds, dw)
+    filtered_ds = ds[ds['dt'] == date]
+    if not filtered_ds.empty:
+        create_map(filtered_ds, dw)
     else:
-        return print('Unavailable date')
+        print('Data not available for the given date.')
 
 
 def create_map_gif(ds, dw, dates):
-        fig, ax = plt.subplots(figsize=(20, 16))
+    fig, ax = plt.subplots(figsize=(20, 16))
 
-        def update(frame):
-            ax.clear()  # Clear the previous plot
-            if ax.legend_:
-                ax.legend_.remove()  # Remove the legend from the previous frame
+    def update(frame):
+        ax.clear()  # Clear the previous plot
+        current_date = dates[frame]
+        axis = dw.plot(ax=ax, color='lightblue', edgecolor='black')
+        filtered_cities = ds[ds['dt'] == current_date]
+        scatter = filtered_cities.plot(column='AverageTemperature', ax=axis, markersize=80, legend=True, legend_kwds={'shrink': 0.3})
+        plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=15)
+        return scatter
 
-            current_date = dates[frame]
-            axis = dw.plot(ax=ax, color='lightblue', edgecolor='black')
-            filtered_cities = ds[ds['dt'] == current_date]
-            scatter = filtered_cities.plot(column='AverageTemperature', ax=axis, markersize=80, legend=True,
-                                           legend_kwds={'shrink': 0.3})
-            plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=15)
-            return scatter
+    animation = FuncAnimation(fig, update, frames=len(dates), interval=250)
 
-        animation = FuncAnimation(fig, update, frames=len(dates), interval=250)
-
-        # Save the animation as a GIF file
-        animation.save('temperature_animation.gif', fps=1)  # 1 frame per second
+    # Save the animation as a GIF file
+    try:
+        animation.save('temperature_animation.gif', fps=1)
+    except Exception as e:
+        print(f'Error: {e}')
