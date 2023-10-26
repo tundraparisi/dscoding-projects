@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="43892e88-6a93-4e4d-9fed-7e56edb48c59" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Alina.Imansakipova/.python-version" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Alina.Imansakipova/hotel-project/.python-version" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Alina.Imansakipova/hotel-project/notebook.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/GlobalLandTemperaturesByMajorCity.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/modules/data_processing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/modules/routing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/modules/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/modules/visualization.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/ne_110m_admin_0_countries/ne_110m_admin_0_countries.README.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/ne_110m_admin_0_countries/ne_110m_admin_0_countries.VERSION.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/ne_110m_admin_0_countries/ne_110m_admin_0_countries.cpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/ne_110m_admin_0_countries/ne_110m_admin_0_countries.dbf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/ne_110m_admin_0_countries/ne_110m_admin_0_countries.prj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/poetry.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Damir.Uvayev/pyproject.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Edoardo.Zanone/ProgettoPython/tests/TryTest.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Edoardo.Zanone/ProgettoPython/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Samaher.Brahem/PythonFile.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Samaher.Brahem/SB_PyProj_21_10.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Samaher.Brahem/This is a Test.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Zhaksylyk.Tansykbay/generali-poetry/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Zhaksylyk.Tansykbay/generali-poetry/generali_poetry/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Zhaksylyk.Tansykbay/generali-poetry/pyproject.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Zhaksylyk.Tansykbay/generali-poetry/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Zhaksylyk.Tansykbay/hello.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Zhaksylyk.Tansykbay/hello.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../aidana.akkaziyeva/myproject1/myproject1/data_generator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../aidana.akkaziyeva/myproject1/myproject1/netflix_data.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../aidana.akkaziyeva/myproject1/myproject1/quiz_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../aknur.abdikarimova/my_project/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../aknur.abdikarimova/my_project/my_project/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../aknur.abdikarimova/my_project/pyproject.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../aknur.abdikarimova/my_project/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../chi.hoang/Board_Game_Project/Bayesian_Average.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../chi.hoang/Board_Game_Project/Data_Import_Fixed.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../chi.hoang/Board_Game_Project/Out_68.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../chi.hoang/Board_Game_Project/bgg.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../cihan.elveren/Weather_Project/GLT_ByMajorCity.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../cihan.elveren/Weather_Project/project copy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../cihan.elveren/Weather_Project/training copy.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../daniele.piazza/Project/project/update_location.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../juliamaria.wdowinska/jokes.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../juliamaria.wdowinska/project-jupyter.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../leila.cielok/cisi/cisi-project/Cleaning_Data1.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../leila.cielok/cisi/pyproject.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../leila.cielok/cisi/usage.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/.idea/Project.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/poetry.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/project/Notebook.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/project/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/pyproject.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../luca.sangiovanni/Project/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../malika.makhmudova/test.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../malika.makhmudova/travel-project/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../malika.makhmudova/travel-project/pyproject.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../malika.makhmudova/travel-project/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../malika.makhmudova/travel-project/usage.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../malika.makhmudova/travel-project/worldcities.xlsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mariasilvia.pancione/coding-project/coding_project.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melany.gomez/myproject/temperature/GlobalLandTemperaturesByMajorCity.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melany.gomez/weather_project - Copia.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melany.gomez/weather_project.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/bgg.csv.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/project-poetry/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/project-poetry/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/project-poetry/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/project-poetry/.idea/project-poetry.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/project-poetry/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/project-poetry/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/project-poetry/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../melissa.rizzi/project/project-poetry/project_poetry/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../michele.coaro/hello.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../mubarak.babslawal/readme.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../niccolo.cibei/project/test.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../sergio.picascia/cisi-project/cisi/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../stefano.chiesa/examProject/matplotlib.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../stefano.chiesa/examProject/temperature_animation.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/.python-version" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/.idea/hotel.project.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/hotel/project/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/notebook.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/poetry.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/pyproject.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tesi.zace/hotel.project/tests/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../valeria.riccardo/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../valeria.riccardo/project" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../valeria.riccardo/project.toml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../valeria.riccardo/utils" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/dscoding-projects.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/dscoding-projects.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Samaher.Brahem" beforeDir="false" afterPath="$PROJECT_DIR$/../Damir.Uvayev/wtpr.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../angelica.longo/angelica_project/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../angelica.longo/angelica_project/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../arianna.girotto/myproject/quiz_ag/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../arianna.girotto/myproject/quiz_ag/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chi.hoang/Board_Game_Project/Data Import.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../chi.hoang/Board_Game_Project/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../chi.hoang/Board_Game_Project/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../daniele.piazza/Project/poetry.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../daniele.piazza/Project/poetry.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../daniele.piazza/Project/project/Untitled.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../daniele.piazza/Project/project/Untitled.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../daniele.piazza/Project/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../daniele.piazza/Project/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../juliamaria.wdowinska/test" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leila.cielok/Project/MyProject" beforeDir="false" afterPath="$PROJECT_DIR$/../leila.cielok/cisi/cisi-project/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../luca.sangiovanni/MyProject/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../luca.sangiovanni/MyProject/myproject/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../.Rhistory" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../luca.sangiovanni/MyProject/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../Edoardo.Zanone/ProgettoPython/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../luca.sangiovanni/MyProject/tests/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Edoardo.Zanone/ProgettoPython/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../luca.sangiovanni/hello.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../luca.sangiovanni/hello.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sergio.picascia/cisi-project/cisi_project/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Edoardo.Zanone/ProgettoPython/progettopython/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sergio.picascia/cisi-project/cisi_project/cisi.py" beforeDir="false" afterPath="$PROJECT_DIR$/../sergio.picascia/cisi-project/cisi/data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../sergio.picascia/cisi-project/usage.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../sergio.picascia/cisi-project/usage.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../stefano.chiesa/examProject/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../stefano.chiesa/examProject/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../stefano.chiesa/examProject/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/../stefano.chiesa/examProject/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../stefano.chiesa/examProject/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../stefano.chiesa/examProject/main.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="2XIdJ0YRaOnocXfUS8VEuMUMbF1" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "Merging main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="43892e88-6a93-4e4d-9fed-7e56edb48c59" name="Changes" comment="" />
+      <created>1698320451493</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1698320451493</updated>
+      <workItem from="1698320454730" duration="654000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/franco_bonifacini$main.coverage" NAME="main Coverage Results" MODIFIED="1698320811101" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Project" />
+  </component>
+</project>

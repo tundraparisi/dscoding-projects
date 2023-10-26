@@ -62,6 +62,10 @@ def present_genre_question (question, correct_answer, incorrect_answers):
 
 
 
+
+
+
+
 def evaluate_answer (user_answer, correct_answer):
     user_answer==correct_answer
 

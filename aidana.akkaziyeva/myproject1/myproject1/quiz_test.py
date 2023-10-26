@@ -33,3 +33,17 @@ print(f"Incorrect Answers: {incorrect_answers}")
 #data_generator.present_dir_question(question, correct_answer, incorrect_answers)
 
 
+
+
+import matplotlib.pyplot as plt
+
+show_release_year = netflix_data['release_year'].value_counts()
+
+# Creating a bar chart
+plt.bar(show_release_year.index, show_release_year.values)
+
+plt.xlabel('Release Year')
+plt.ylabel('Count')
+plt.title('Distribution of Show Types on Netflix')
+
+plt.show()
