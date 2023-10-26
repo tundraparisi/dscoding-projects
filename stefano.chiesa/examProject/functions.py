@@ -48,21 +48,17 @@ def create_map_gif(ds, dw, dates):
         current_date = dates[frame]
         filtered_cities = ds[ds['dt'] == current_date]
         scatter = filtered_cities.plot(column='AverageTemperature', ax=axis, markersize=80)
-        plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=15)
+        plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=25)
         return scatter
 
-    def init(frame):
-        current_date = dates[frame]
-        # Create colorbar as a legend
-        sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(vmin=-20, vmax=30))
-        # add the colorbar to the figure
-        divider = make_axes_locatable(ax)
-        cax = divider.append_axes("right", size="5%", pad=0.5)
-        cbar = fig.colorbar(sm, cax=cax)
+    def init():
+        # Create an empty colorbar with the appropriate colormap and normalization
+        sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(vmin=-40, vmax=40))
+        sm.set_array([])  # empty array for the data range
+        # Add the colorbar to the figure
+        cbar = plt.colorbar(sm, ax=ax, fraction=0.02, pad=0.04)
         cbar.ax.tick_params(labelsize=14)
         return cbar
 
-        # the FuncAnimation function iterates through our animate function using the steps array
-
-    animation = FuncAnimation(fig, update, frames=len(dates), interval=250, init_func = init)
+    animation = FuncAnimation(fig, update, frames=len(dates), interval=250, init_func= init)
     animation.save('temperature_animation.gif', fps=1)
