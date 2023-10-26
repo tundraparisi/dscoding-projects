@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 def convert(db, column):
@@ -46,9 +47,18 @@ def create_map_gif(ds, dw, dates):
     def update(frame):
         current_date = dates[frame]
         filtered_cities = ds[ds['dt'] == current_date]
-        scatter = filtered_cities.plot(column='AverageTemperature', ax=axis, markersize=80, legend=True, legend_kwds={'shrink': 0.3})
-        plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=15)
+        scatter = filtered_cities.plot(column='AverageTemperature', ax=axis, markersize=80)
+        plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=25)
         return scatter
 
-    animation = FuncAnimation(fig, update, frames=len(dates), interval=250)
+    def init():
+        # Create an empty colorbar with the appropriate colormap and normalization
+        sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(vmin=-40, vmax=40))
+        sm.set_array([])  # empty array for the data range
+        # Add the colorbar to the figure
+        cbar = plt.colorbar(sm, ax=ax, fraction=0.02, pad=0.04)
+        cbar.ax.tick_params(labelsize=14)
+        return cbar
+
+    animation = FuncAnimation(fig, update, frames=len(dates), interval=250, init_func= init)
     animation.save('temperature_animation.gif', fps=1)
