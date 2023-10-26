@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="43892e88-6a93-4e4d-9fed-7e56edb48c59" name="Changes" comment="" />
+    <list default="true" id="43892e88-6a93-4e4d-9fed-7e56edb48c59" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,6 +16,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="Jupyter Notebook" />
       </list>
     </option>
   </component>
@@ -50,7 +53,7 @@
       <option name="presentableId" value="Default" />
       <updated>1698320451493</updated>
       <workItem from="1698320454730" duration="654000" />
-      <workItem from="1698321323002" duration="303000" />
+      <workItem from="1698321323002" duration="1372000" />
     </task>
     <servers />
   </component>
