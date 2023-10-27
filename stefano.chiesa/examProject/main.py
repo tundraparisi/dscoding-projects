@@ -19,5 +19,7 @@ gpd_world = gpd_world[gpd_world.continent != "Antarctica"]  # removing antartica
 fun.create_map_date(gpd_cities, gpd_world, '1990-01-01')
 
 # dates = gpd_cities['dt'].unique()
-dates = ['1990-01-01', '1990-06-01', '1910-01-01', '1998-04-01']
+
+dates = ['1995-01-01', '1910-01-01', '1995-06-01']
 fun.create_map_gif(gpd_cities, gpd_world, dates)
+
