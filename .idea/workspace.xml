@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03dea66b-f0a2-4e37-8b88-ba0ef7bdfb75" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dscoding-projects.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dscoding-projects.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/niccolo.cibei/project/test.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/niccolo.cibei/project/test.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +44,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/cibei/OneDrive/Desktop/Coding_for_data_science/Python/dscoding-projects/niccolo.cibei/Venv",
+    "last_opened_file_path": "C:/Users/cibei/OneDrive/Desktop/Coding_for_data_science/Python/dscoding-projects/niccolo.cibei",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -66,6 +64,8 @@
       <updated>1697715699482</updated>
       <workItem from="1697715700792" duration="1354000" />
       <workItem from="1697812118516" duration="2821000" />
+      <workItem from="1698489178973" duration="38000" />
+      <workItem from="1698489218434" duration="375000" />
     </task>
     <servers />
   </component>
