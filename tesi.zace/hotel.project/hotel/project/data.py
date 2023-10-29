@@ -1,4 +1,5 @@
 import pandas as pd
+import openpyxl
 
 file=open('/Users/tesi/Downloads/hotels/hotels.xlsx','r')
 def import_data(path):
@@ -7,4 +8,4 @@ def import_data(path):
 	return data
 
 
-
+pd.read_excel(r"/Users/tesi/Downloads/hotels/guests.xlsx")
