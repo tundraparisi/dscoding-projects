@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
+import math
 
 
 def convert(db, column):
@@ -122,3 +123,61 @@ def create_map_range(ds, dw, start_date, end_date):
     fig.savefig('matplotlib.png', dpi=500, bbox_inches='tight')
 
     plt.show()
+
+
+def calculate_distance(city1, city2):
+    # Calculate the distance between two cities using their latitude and longitude coordinates
+    lat1, lon1 = city1['Latitude'], city1['Longitude']
+    lat2, lon2 = city2['Latitude'], city2['Longitude']
+
+    # Haversine formula to compute distances on the Earth's surface in kms
+    radius = 6371  # Earth radius in kilometers
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = radius * c
+
+    if distance != 0:
+        return distance
+    else:
+        return 1000000000
+
+
+def warmest_closest_city(current_city, ds):
+    cities = []
+    for idx, city in ds.iterrows():
+        distance = calculate_distance(city, current_city)
+        cities.append((distance, city))
+
+    top5 = sorted(cities, key=lambda x: x[0])[:5]
+
+    warmest = max(top5, key=lambda x: x[1]['AverageTemperature'])
+
+    return warmest[1].loc['City']
+
+
+def best_route(ds, date, start_city, target_city):
+    ds = ds[ds['dt'] == date]
+    route = [start_city]
+    current_city = start_city  # initialize current_city with the start city name
+
+    while current_city != target_city:
+        # find the GeoDataFrame row for the current city
+        current_city_row = ds[ds['City'] == current_city].iloc[0]
+        warmest = warmest_closest_city(current_city_row, ds)
+        # extract the city name from the GeoDataFrame row
+        current_city = warmest
+        ds = ds[ds['City'] != current_city]
+        route.append(current_city)
+    return route
+
+
+
+
+
+
+
+
+
+
