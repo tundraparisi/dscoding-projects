@@ -51,13 +51,17 @@ def present_dir_question (question, correct_answer, incorrect_answers):
 
 def present_genre_question (question, correct_answer, incorrect_answers):
     print(question)
-    all_answers = [correct_answer] + incorrect_answers 
+    all_answers = correct_answer + incorrect_answers 
     #[]-creating a list from a single string, incorrect answers is already a list of strings
 
     random.shuffle(all_answers)
 
     for i, answer in enumerate(all_answers, 1):
         print(f"{i}. {answer}")      #{}placeholders for variables in a string
+
+
+
+
 
 
 
