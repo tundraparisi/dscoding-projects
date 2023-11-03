@@ -79,7 +79,7 @@ def date_map_gif(ds, dw, min_date, max_date):
 
     def init():
         # Create an empty colorbar with the appropriate colormap and normalization
-        sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(vmin=-40, vmax=40))
+        sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(vmin=-80, vmax=60))
         sm.set_array([])  # empty array for the data range
         # Add the colorbar to the figure
         cbar = plt.colorbar(sm, ax=ax, fraction=0.02, pad=0.04)
