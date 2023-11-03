@@ -137,29 +137,41 @@ def calculate_distance(city1, city2):
     a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = radius * c
-    return distance
+
+    if distance != 0:
+        return distance
+    else:
+        return 1000000000
 
 
 def warmest_closest_city(current_city, ds):
     cities = []
-    for city in ds:
+    for idx, city in ds.iterrows():
         distance = calculate_distance(city, current_city)
         cities.append((distance, city))
 
-    top3 = sorted(cities, key=lambda x: x[0][:3])
-    warmest = max(top3, key=lambda x: x[1]['AverageTemperature'])
-    return warmest[1]
+    top5 = sorted(cities, key=lambda x: x[0])[:5]
+
+    warmest = max(top5, key=lambda x: x[1]['AverageTemperature'])
+
+    return warmest[1].loc['City']
 
 
 def best_route(ds, date, start_city, target_city):
     ds = ds[ds['dt'] == date]
-    route = []
-    current_city = ds[ds['City'] == start_city]
+    route = [start_city]
+    current_city = start_city  # initialize current_city with the start city name
 
     while current_city != target_city:
-        warmest = warmest_closest_city(current_city, ds)
-        current_city = ds[ds['City'] == warmest]
-        route.append(ds['City'] == current_city)
+        # find the GeoDataFrame row for the current city
+        current_city_row = ds[ds['City'] == current_city].iloc[0]
+        warmest = warmest_closest_city(current_city_row, ds)
+        # extract the city name from the GeoDataFrame row
+        current_city = warmest
+        ds = ds[ds['City'] != current_city]
+        route.append(current_city)
+    return route
+
 
 
 

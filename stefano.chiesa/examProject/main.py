@@ -26,4 +26,4 @@ gpd_cities = gpd.GeoDataFrame(
 #fun.create_map_gif(gpd_cities, gpd_world, dates)
 #fun.create_map_range(gpd_cities, gpd_world, '1910-08-01', '2005-12-01')
 
-print(fun.best_route(gpd_cities, '2001-04-01', 'Bejing', 'Los Angeles'))
+print(fun.best_route(gpd_cities, '2001-04-01', 'Peking', 'Los Angeles'))
