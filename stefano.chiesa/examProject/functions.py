@@ -138,10 +138,11 @@ def calculate_distance(city1, city2, route):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = radius * c
 
-    if distance == 0 or city1['City'] in route:   # I set the cities where we already have been and the current city out of space to avoid loops :)
+    if distance == 0 or city1['City'] in route:   # I set the cities where we already have been and the current city out of the planet to avoid loops :)
         return 1000000000
     else:
         return distance
+    
 
 
 def warmest_closest_city(current_city, ds, route):
