@@ -125,7 +125,7 @@ def create_map_range(ds, dw, start_date, end_date):
     plt.show()
 
 
-def calculate_distance(city1, city2):
+def calculate_distance(city1, city2, route):
     # Calculate the distance between two cities using their latitude and longitude coordinates
     lat1, lon1 = city1['Latitude'], city1['Longitude']
     lat2, lon2 = city2['Latitude'], city2['Longitude']
@@ -138,16 +138,16 @@ def calculate_distance(city1, city2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = radius * c
 
-    if distance != 0:
-        return distance
-    else:
+    if distance == 0 or city1['City'] in route:
         return 1000000000
+    else:
+        return distance
 
 
-def warmest_closest_city(current_city, ds):
+def warmest_closest_city(current_city, ds, route):
     cities = []
     for idx, city in ds.iterrows():
-        distance = calculate_distance(city, current_city)
+        distance = calculate_distance(city, current_city, route)
         cities.append((distance, city))
 
     top5 = sorted(cities, key=lambda x: x[0])[:5]
@@ -165,10 +165,9 @@ def best_route(ds, date, start_city, target_city):
     while current_city != target_city:
         # find the GeoDataFrame row for the current city
         current_city_row = ds[ds['City'] == current_city].iloc[0]
-        warmest = warmest_closest_city(current_city_row, ds)
+        warmest = warmest_closest_city(current_city_row, ds, route)
         # extract the city name from the GeoDataFrame row
         current_city = warmest
-        ds = ds[ds['City'] != current_city]
         route.append(current_city)
     return route
 
