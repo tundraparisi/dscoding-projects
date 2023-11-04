@@ -126,19 +126,19 @@ def create_map_range(ds, dw, start_date, end_date):
 
 
 def calculate_distance(city1, city2, route):
-    # Calculate the distance between two cities using their latitude and longitude coordinates
+    # calculate the distance between two cities using their latitude and longitude coordinates
     lat1, lon1 = city1['Latitude'], city1['Longitude']
     lat2, lon2 = city2['Latitude'], city2['Longitude']
 
     # Haversine formula to compute distances on the Earth's surface in kms
-    radius = 6371  # Earth radius in kilometers
+    radius = 6371  # earth radius in kilometers
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
     a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = radius * c
 
-    if distance == 0 or city1['City'] in route:
+    if distance == 0 or city1['City'] in route:   # I set the cities where we already have been and the current city out of space to avoid loops :)
         return 1000000000
     else:
         return distance
@@ -150,11 +150,10 @@ def warmest_closest_city(current_city, ds, route):
         distance = calculate_distance(city, current_city, route)
         cities.append((distance, city))
 
-    top5 = sorted(cities, key=lambda x: x[0])[:5]
+    top5 = sorted(cities, key=lambda x: x[0])[:5]    # one line function to take the top 5 cities by distance (closest)
+    warmest = max(top5, key=lambda x: x[1]['AverageTemperature'])   # same but by AverageTemperature
 
-    warmest = max(top5, key=lambda x: x[1]['AverageTemperature'])
-
-    return warmest[1].loc['City']
+    return warmest[1].loc['City']        # we return the name of the warmest city
 
 
 def best_route(ds, date, start_city, target_city):
