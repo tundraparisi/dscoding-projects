@@ -10,6 +10,13 @@ def cleaned_Dataframe(df):
     df.drop(columns=['city', 'country', 'iso3', 'admin_name'], axis=1, inplace=True)
     return df
 
+def create_matrxi(df,k=3):
+    mat = distance.cdist(df[['lat', 'lng']], df[['lat', 'lng']], metric='euclidean')
+    new_df = pd.DataFrame(mat, index=df['id'], columns=df['id'])
+
+    arr = new_df.values
+    np.fill_diagonal(arr, np.nan)  # Replace diagonal with NaN
+    return new_df
 def find_closest_cities(df, k=3):
     mat = distance.cdist(df[['lat', 'lng']], df[['lat', 'lng']], metric='euclidean')
     new_df = pd.DataFrame(mat, index=df['id'], columns=df['id'])
