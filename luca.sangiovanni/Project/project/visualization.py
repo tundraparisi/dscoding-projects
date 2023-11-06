@@ -1,27 +1,53 @@
-class City_Country:
+import numpy as np
+import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import plotly.express as px
+
+
+path = "C:\\Users\sangi\Desktop\Info progetto python\Datasets"
+tempByCity = pd.read_csv(path + "\GlobalLandTemperaturesByCity.csv").dropna().reset_index(drop=True)
+tempByMajorCity = pd.read_csv(path + "\GlobalLandTemperaturesByMajorCity.csv").dropna().reset_index(drop = True).drop(["Latitude", "Longitude"], axis=1)
+cities = pd.read_csv(path + "\cities.csv", index_col=0)
+majorCities = pd.read_csv(path + "\majorCities.csv", index_col=0)
+
+months = {"01": 'January', '02': 'February', '03': 'March', '04': 'April', '05': 'May', '06': 'June', '07': 'July',
+          '08': 'August', '09': 'September', '10': 'October', '11': 'November', '12': 'December'}
+
+
+class CityCountry:
+
+    numCities = cities.drop(["Latitude", "Longitude"], axis=1).groupby("Country").count().sort_values(by="City",
+                                                                                                      ascending=
+                                                                                                      False)
+
     def byCountry_List(self):
-        numCities = cities.drop(["Latitude", "Longitude"], axis=1).groupby("Country").count().sort_values(by="City",
-                                                                                                          ascending=False)
-        print(numCities.head(15))
+        return CityCountry.numCities.head(15)
 
     def byCountry_Plot(self):
-        plt.bar(numCities.index[:15], numCities.City[:15], color="brown")
+        plt.bar(CityCountry.numCities.index[:15], CityCountry.numCities.City[:15], color="brown")
         plt.xticks(rotation=70)
         plt.ylabel("Number of cities in the dataset\n")
         plt.title("Number of cities in the dataset, by country\n")
 
     def byCountry_Map(self):
-        nation = np.random.choice(cities.Country)
+        nation = np.random.choice(cities.Country.unique())
         byCountry = cities[cities.Country == nation]
-        mapTitle = str("Cities in " + nation)
+        number = str(byCountry["City"].count())
+        if number == "1":
+            mapTitle = str("There is " + number + " city in " + nation)
+        else:
+            mapTitle = str("There are " + number + " cities in " + nation)
         fig = px.scatter_geo(byCountry, lat=byCountry["Latitude"], lon=byCountry["Longitude"],
                              hover_name=byCountry["City"], color_discrete_sequence=["darkred"])
-        fig.update_geos(showocean=True, oceancolor="Lightblue", fitbounds="locations", showcountries=True)
+        fig.update_geos(showocean=True, oceancolor="LightBlue", fitbounds="locations", showcountries=True,
+                        showland=True, landcolor="LightGreen")
         fig.update_layout(title_text=mapTitle, title_x=0.5)
         fig.show()
 
 
-class bigCities:
+class BigCities:
+
     def majorCitiesMap(self):
         geo_df = gpd.read_file(r"C:\Users\sangi\Desktop\Info progetto python\Datasets\majorCities.csv", index_col=0)
         fig = px.scatter_geo(geo_df, lat="Latitude", lon="Longitude", hover_name="City",
@@ -31,10 +57,8 @@ class bigCities:
         fig.show()
 
 
-class temperatures:
+class Temperatures:
 
-    months = {"01": 'January', '02': 'February', '03': 'March', '04': 'April', '05': 'May', '06': 'June', '07': 'July',
-              '08': 'August', '09': 'September', '10': 'October', '11': 'November', '12': 'December'}
     def tempJanAug(self, city_name):
         temp = tempByCity[tempByCity["City"] == city_name]
         tempJan = temp[temp["dt"].str.contains("5-01-01")]
@@ -75,3 +99,18 @@ class temperatures:
         fig.update_geos(showocean=True, oceancolor="Lightblue", fitbounds="locations")
         fig.update_layout(title_text=titleText, title_x=0.47)
         fig.show()
+
+    def countryStats(self):
+        nation = np.random.choice(cities.Country)
+        byNation = tempByCity[tempByCity.Country == nation]
+        print(("Here is some stats about " + nation + "\n").upper())
+        first = str(byNation.dt.iloc[0])
+        latest = str(byNation.dt.iloc[-1])
+        maxTemp = str(round(max(byNation.AverageTemperature), 2))
+        minTemp = str(round(min(byNation.AverageTemperature), 2))
+        highest = str(byNation.sort_values(by=["AverageTemperature"], ascending=False).City.iloc[0])
+        lowest = str(byNation.sort_values(by=["AverageTemperature"], ascending=True).City.iloc[0])
+        print("First recorded temperature: " + months[first[-5:-3]] + " " + first[:4])
+        print("Latest recorded temperature: " + months[latest[-5:-3]] + " " + latest[:4])
+        print("Highest monthly average temperature recorded: " + maxTemp + "°C" + " in " + highest)
+        print("Lowest monthly average temperature recorded: " + minTemp + "°C" + " in " + lowest)
