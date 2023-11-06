@@ -35,5 +35,6 @@ func.maps(visited_cities)'''
 '''a = func.distance_between_two_cities()
 
 func.maps(a)'''
-b = func.prova(1380724377)
+b = func.distance_between_two_cities(1380382862, 1380724377)
+print(b)
 func.maps(b)
