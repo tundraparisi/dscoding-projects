@@ -14,7 +14,6 @@ def extract_words(text):
 def remove_stopwords(list_of_words):
     return [w for w in list_of_words if w not in stopwords.words('english')]
 
-# Function: preprocess a list of texts
-def preprocess_a_list_of_texts(list_of_texts):
-    list_of_lists_of_words = [remove_stopwords(lw) for lw in [extract_words(expand_contractions(t)) for t in list_of_texts]]
-    return [" ".join(list_of_lists_of_words[i]) for i in range(0, len(list_of_lists_of_words))]
+# Function: preprocess text
+def preprocess(text):
+    return " ".join(remove_stopwords(extract_words(expand_contractions(text))))
