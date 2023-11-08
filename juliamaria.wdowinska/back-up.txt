@@ -12,3 +12,12 @@ userprediction.replace(1, 'humorous', inplace = True)
 userprediction.replace(0, 'unhumorous', inplace = True)
 
 print('Your text is:', userprediction.values[0])
+
+# Function: preprocess a list of texts
+def preprocess_a_list_of_texts(list_of_texts):
+    list_of_lists_of_words = [remove_stopwords(lw) for lw in [extract_words(expand_contractions(t)) for t in list_of_texts]]
+    return [" ".join(list_of_lists_of_words[i]) for i in range(0, len(list_of_lists_of_words))]
+
+# Preprocess 'text' and update the dataframe
+dfjokes.text = [preprocess(t) for t in dfjokes.text.values]
+print(dfjokes.head())
