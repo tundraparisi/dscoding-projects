@@ -1,5 +1,5 @@
 import pandas as pd
-from UDFs import expand_contractions, extract_words, remove_stopwords
+from UDFs import preprocess_a_list_of_texts
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 from sklearn.model_selection import train_test_split
@@ -16,26 +16,8 @@ print(dfjokes.isnull().any()) # Check for missing values
 print(dfjokes.dtypes) # Check the data type
 print(dfjokes.shape[0]) # Check the number of observations
 
-# Expand contractions
-text1 = []
-for element in dfjokes.text.values:
-    text1.append(expand_contractions(element))
-
-# Extract words from text
-words1 = [extract_words(element) for element in text1]
-
-# Remove 'stopwords'
-text2 = []
-for element in words1:
-    text2.append(remove_stopwords(element))
-
-# Concatenate words back to text
-text3 = []
-for i in range(0, len(text2)):
-    text3.append(" ".join(text2[i]))
-
-# Update the dataframe
-dfjokes.text = text3
+# Preprocess 'text' and update the dataframe
+dfjokes.text = preprocess_a_list_of_texts(dfjokes.text.values)
 print(dfjokes.head())
 
 # Text length: humor vs. not humor
