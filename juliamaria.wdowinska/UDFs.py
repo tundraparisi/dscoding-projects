@@ -16,23 +16,5 @@ def remove_stopwords(list_of_words):
 
 # Function: preprocess a list of texts
 def preprocess_a_list_of_texts(list_of_texts):
-    
-    # Expand contractions
-    list_of_texts1 = []
-    for t in list_of_texts:
-        list_of_texts1.append(expand_contractions(t))
-        
-    # Extract words from text
-    list_of_words1 = [extract_words(t) for t in list_of_texts1]
-    
-    # Remove 'stopwords'
-    list_of_words2 = []
-    for word in list_of_words1:
-        list_of_words2.append(remove_stopwords(word))
-        
-    # Concatenate words back to text
-    list_of_texts2 = []
-    for i in range(0, len(list_of_words2)):
-        list_of_texts2.append(" ".join(list_of_words2[i]))
-
-    return list_of_texts2
+    list_of_lists_of_words = [remove_stopwords(lw) for lw in [extract_words(expand_contractions(t)) for t in list_of_texts]]
+    return [" ".join(list_of_lists_of_words[i]) for i in range(0, len(list_of_lists_of_words))]
