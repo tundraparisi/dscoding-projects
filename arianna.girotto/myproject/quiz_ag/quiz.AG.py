@@ -1,34 +1,46 @@
 import pandas as pd
 import numpy as np
 
-title_basics = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/title.basics.tsv", sep="\t", quoting=3,
-                           encoding='latin-1',
-                           engine='python', nrows=50)
+title_basics = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/title.basics.tsv", sep="\t", quoting=3, encoding='latin-1',
+                           engine='python', nrows=10000)
 ratings = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/ratings.tsv", sep="\t", quoting=3, encoding='latin-1',
-                      engine='python', nrows=50)
+                      engine='python', nrows=10000)
 info_person = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/name.tsv", sep="\t", quoting=3, encoding='latin-1',
-                          engine='python', nrows=50)
-
+                          engine='python', nrows=10000)
 
 def generate_question_answers_tb(num_q_title_basics):
     questions = []
     answers_list = []
     for i in range(num_q_title_basics):
-        random_tconst = np.random.choice(title_basics['tconst'], replace=False)
-        movie_title = title_basics.loc[title_basics['tconst'] == random_tconst, 'primaryTitle'].values[0]
-        questions.append(f"In quale anno è uscito {movie_title}?")
+        valid_movie = False
+        while not valid_movie:
+            random_tconst = np.random.choice(title_basics['tconst'], replace=False)
+            right_answer = title_basics.loc[title_basics['tconst'] == random_tconst, 'startYear'].values[0]
 
-        right_answer = title_basics.loc[title_basics['tconst'] == random_tconst, 'startYear'].values[0]
-        wrong_answers = []
-        while len(wrong_answers) < 3:
-            wrong_answer = np.random.choice(title_basics['startYear'])
-            if wrong_answer != right_answer and wrong_answer not in wrong_answers:
-                wrong_answers.append(wrong_answer)
-        answers = {
-            'correct': right_answer,
-            'incorrect': wrong_answers
-        }
-        answers_list.append(answers)
+            # Controlla se right_answer è diverso da '\\N' prima di convertirlo in un intero
+            if right_answer != '\\N':
+                right_answer = int(right_answer)
+                if 1990 <= right_answer <= 2023:
+                    valid_movie = True
+
+        if valid_movie:
+            movie_title = title_basics.loc[title_basics['tconst'] == random_tconst, 'primaryTitle'].values[0]
+            questions.append(f"In quale anno è uscito {movie_title}?")
+
+            wrong_answers = []
+            while len(wrong_answers) < 3:
+                wrong_answer = np.random.choice(title_basics['startYear'])
+                if wrong_answer != '\\N':
+                    wrong_answer = int(wrong_answer)
+                    if wrong_answer != right_answer and wrong_answer not in wrong_answers and 1990 <= wrong_answer <= 2023:
+                        wrong_answers.append(wrong_answer)
+
+            answers = {
+                'correct': right_answer,
+                'incorrect': wrong_answers
+            }
+            answers_list.append(answers)
+
     return questions, answers_list
 
 
@@ -205,3 +217,4 @@ def choose_quiz():
 
 
 choose_quiz()
+
