@@ -33,6 +33,6 @@ I use the [following Kaggle dataset](https://www.kaggle.com/datasets/datasnaek/c
 
 - [X] Create a GitHub folder for the project.
 - [X] Create a README file
-- [ ] Write a function to open a dataset from Kaggle directly to the VSCode
-- [ ] Download the dataset
+- [X] Write a function for dataset opening
+- [X] Download the dataset
 - [ ] Redact the dataset with pandas.
