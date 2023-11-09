@@ -1,12 +1,12 @@
 import pandas as pd
-from UDFs import expand_contractions, extract_words, remove_stopwords
+from UDFs import preprocess
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay
 
 # Load the data
 dfjokes = pd.read_csv('jokes.csv')
@@ -16,26 +16,8 @@ print(dfjokes.isnull().any()) # Check for missing values
 print(dfjokes.dtypes) # Check the data type
 print(dfjokes.shape[0]) # Check the number of observations
 
-# Expand contractions
-text1 = []
-for element in dfjokes.text.values:
-    text1.append(expand_contractions(element))
-
-# Extract words from text
-words1 = [extract_words(element) for element in text1]
-
-# Remove 'stopwords'
-text2 = []
-for element in words1:
-    text2.append(remove_stopwords(element))
-
-# Concatenate words back to text
-text3 = []
-for i in range(0, len(text2)):
-    text3.append(" ".join(text2[i]))
-
-# Update the dataframe
-dfjokes.text = text3
+# Preprocess 'text' and update the dataframe
+dfjokes['text'] = dfjokes['text'].apply(preprocess)
 print(dfjokes.head())
 
 # Text length: humor vs. not humor
@@ -64,7 +46,7 @@ plt.show()
 print("Number of humorous texts:", dfjokes.humor[dfjokes.humor == True].count())
 print("Number of unhumorous texts:", dfjokes.humor[dfjokes.humor == False].count())
 
-# Data transformation and split into the training and test sets
+# Transform data and split it into the training and test sets
 dfjokes.humor.replace(True, 1, inplace = True)
 dfjokes.humor.replace(False, 0, inplace = True)
 
@@ -76,15 +58,11 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, rando
 print("Size of the training set:", len(X_train))
 print("Size of the test set:", len(X_test))
 
-print(X_train)
-
 # Vectorize text data
 vectorizer = CountVectorizer()
 
 X_train = vectorizer.fit_transform(X_train)
 X_test = vectorizer.transform(X_test)
-
-print(X_train)
 
 # Logistic regression (LR) with Stochastic Gradient Descent (SGD) training
 lr_classifier = SGDClassifier(loss = 'log_loss', max_iter = 1000)
@@ -94,53 +72,26 @@ lr_classifier.fit(X_train, y_train)
 mnb_classifier = MultinomialNB()
 mnb_classifier.fit(X_train, y_train)
 
-# LR evaluation (training set)
-y_train_pred_lr = lr_classifier.predict(X_train)
+# Evaluate classifiers on the training and test sets
+acc_train_lr = accuracy_score(y_train, lr_classifier.predict(X_train)).round(decimals = 4)
+acc_train_mnb = accuracy_score(y_train, mnb_classifier.predict(X_train)).round(decimals = 4)
+acc_test_lr = accuracy_score(y_test, lr_classifier.predict(X_test)).round(decimals = 4)
+acc_test_mnb = accuracy_score(y_test, mnb_classifier.predict(X_test)).round(decimals = 4)
 
-f1_train_lr = f1_score(y_train, y_train_pred_lr).round(decimals = 4)
-acc_train_lr = accuracy_score(y_train, y_train_pred_lr).round(decimals = 4)
-prec_train_lr = precision_score(y_train, y_train_pred_lr).round(decimals = 4)
-rec_train_lr = recall_score(y_train, y_train_pred_lr).round(decimals = 4)
-print('LR - training set:', '\nF1:', f1_train_lr, '\nAccuracy:', acc_train_lr,
-      '\nPrecision:', prec_train_lr, '\nRecall:', rec_train_lr)
-
-# MNB evaluation (training set)
-y_train_pred_mnb = mnb_classifier.predict(X_train)
-
-f1_train_mnb = f1_score(y_train, y_train_pred_mnb).round(decimals = 4)
-acc_train_mnb = accuracy_score(y_train, y_train_pred_mnb).round(decimals = 4)
-prec_train_mnb = precision_score(y_train, y_train_pred_mnb).round(decimals = 4)
-rec_train_mnb = recall_score(y_train, y_train_pred_mnb).round(decimals = 4)
-print('\nMNB - training set:', '\nF1:', f1_train_mnb, '\nAccuracy:', acc_train_mnb,
-      '\nPrecision:', prec_train_mnb, '\nRecall:', rec_train_mnb)
-
-# LR evaluation (test set)
-y_test_pred_lr = lr_classifier.predict(X_test)
-
-f1_test_lr = f1_score(y_test, y_test_pred_lr).round(decimals = 4)
-acc_test_lr = accuracy_score(y_test, y_test_pred_lr).round(decimals = 4)
-prec_test_lr = precision_score(y_test, y_test_pred_lr).round(decimals = 4)
-rec_test_lr = recall_score(y_test, y_test_pred_lr).round(decimals = 4)
-print('\nLR - test set:', '\nF1:', f1_test_lr, '\nAccuracy:', acc_test_lr,
-      '\nPrecision:', prec_test_lr, '\nRecall:', rec_test_lr)
-
-# MNB evaluation (test set)
-y_test_pred_mnb = mnb_classifier.predict(X_test)
-
-f1_test_mnb = f1_score(y_test, y_test_pred_mnb).round(decimals = 4)
-acc_test_mnb = accuracy_score(y_test, y_test_pred_mnb).round(decimals = 4)
-prec_test_mnb = precision_score(y_test, y_test_pred_mnb).round(decimals = 4)
-rec_test_mnb = recall_score(y_test, y_test_pred_mnb).round(decimals = 4)
-print('\nLR - test set:', '\nF1:', f1_test_mnb, '\nAccuracy:', acc_test_mnb,
-      '\nPrecision:', prec_test_mnb, '\nRecall:', rec_test_mnb)
+print('\nEvaluation on the training set:',
+      '\nAccuracy of LR classifier:', acc_train_lr,
+      '\nAccuracy of MNB classifier:', acc_train_mnb,
+      '\nEvaluation on the test set:',
+      '\nAccuracy of LR classifier:', acc_test_lr,
+      '\nAccuracy of MNB classifier:', acc_test_mnb)
 
 # MNB confusion matrix (test set)
 ConfusionMatrixDisplay.from_estimator(mnb_classifier, X_test, y_test, display_labels = ["Unhumorous", "Humorous"])
 plt.title("Confusion Matrix - MNB Classifier")
 plt.show()
 
-# Enter your text
-usertext = input('Enter text:')
+# User-defined text
+user_text = input('Enter text:')
 # Sample texts:
 # (H) Why don’t Calculus majors throw house parties? Because you should never drink and derive.
 # (H) A man tells his doctor, “Doc, help me. I’m addicted to Twitter!” The doctor replies, “Sorry, I don’t follow you ...”
@@ -149,14 +100,8 @@ usertext = input('Enter text:')
 # (NH) Boris Johnson is still in charge. But behind closed doors, rivals are plotting his ouster.
 # (NH) Seven killed in helicopter crash in Italy's Monte Cusna.
 
-# Text pre-processing
-usertext = " ".join(remove_stopwords(extract_words(expand_contractions(usertext))))
+# Preprocess 'text', vectorize and predict humor using MNB classifier
+user_text1 = vectorizer.transform([preprocess(user_text)])
+user_prediction = mnb_classifier.predict(user_text1)
 
-# Humor prediction using MNB classifier
-user_X = vectorizer.transform([usertext])
-userprediction = mnb_classifier.predict(user_X)
-
-if userprediction[0] == 1:
-    print('Your text is: humorous.')
-else:
-    print('Your text is: unhumorous.')
+print('Your text is humorous.' if user_prediction[0] == 1 else 'Your text is unhumorous.')
