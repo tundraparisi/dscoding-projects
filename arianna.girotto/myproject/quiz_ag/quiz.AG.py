@@ -68,8 +68,8 @@ def generate_question_answers_ip(num_q_info_person):
 ## con il 50% delle risposte esatte, medio se 60%, difficile se 70%.
 
 def easy():
-    title_basics_questions, title_basics_answers = generate_question_answers_tb(10)
-    info_person_questions, info_person_answers = generate_question_answers_ip(10)
+    title_basics_questions, title_basics_answers = generate_question_answers_tb(1)
+    info_person_questions, info_person_answers = generate_question_answers_ip(1)
 
     title_basics_pairs = list(zip(title_basics_questions, title_basics_answers))
     info_person_pairs = list(zip(info_person_questions, info_person_answers))
@@ -87,23 +87,27 @@ def easy():
         for j, answer in enumerate(answer_options):
             print(f"{j + 1}. {answer}")
 
-        user_answer = int(input("Inserisci il numero della risposta corretta: "))
+        while True:
+            user_answer = input("Inserisci il numero della risposta corretta: ")
+            try:
+                user_answer = int(user_answer)
+                if 1 <= user_answer <= len(answer_options) and answer_options[user_answer - 1] == answers[i]['correct']:
+                    print("Risposta corretta!\n")
+                    score += 1
+                    break
+                elif user_answer > len(answer_options):
+                    print("Risposta non valida.\n")
+                else:
+                    print("Risposta errata!\n")
+                    break
+            except ValueError:
+                print("Inserisci un numero valido.\n")
 
-        try:
-            if 1 <= user_answer <= len(answer_options) and answer_options[user_answer - 1] == answers[i]['correct']:
-                print("Risposta corretta!\n")
-                score += 1
-            else:
-                print("Risposta errata.\n")
-        except ValueError:
-            print("Inserisci un numero valido.\n")
-
-    print(f"Punteggio finale: {score}/{len(questions)}")
-
+        print(f"Punteggio finale: {score}/{len(questions)}")
 
 def medium():
-    title_basics_questions, title_basics_answers = generate_question_answers_tb(10)
-    info_person_questions, info_person_answers = generate_question_answers_ip(10)
+    title_basics_questions, title_basics_answers = generate_question_answers_tb(1)
+    info_person_questions, info_person_answers = generate_question_answers_ip(1)
 
     title_basics_pairs = list(zip(title_basics_questions, title_basics_answers))
     info_person_pairs = list(zip(info_person_questions, info_person_answers))
@@ -121,16 +125,21 @@ def medium():
         for j, answer in enumerate(answer_options):
             print(f"{j + 1}. {answer}")
 
-        user_answer = int(input("Inserisci il numero della risposta corretta: "))
-
-        try:
-            if 1 <= user_answer <= len(answer_options) and answer_options[user_answer - 1] == answers[i]['correct']:
-                print("Risposta corretta!\n")
-                score += 1
-            else:
-                print("Risposta errata.\n")
-        except ValueError:
-            print("Inserisci un numero valido.\n")
+        while True:
+            user_answer = input("Inserisci il numero della risposta corretta: ")
+            try:
+                user_answer = int(user_answer)
+                if 1 <= user_answer <= len(answer_options) and answer_options[user_answer - 1] == answers[i]['correct']:
+                    print("Risposta corretta!\n")
+                    score += 1
+                    break
+                elif user_answer > len(answer_options):
+                    print("Risposta non valida.\n")
+                else:
+                    print("Risposta errata!\n")
+                    break
+            except ValueError:
+                print("Inserisci un numero valido.\n")
 
     print(f"Punteggio finale: {score}/{len(questions)}")
 
@@ -155,16 +164,21 @@ def difficult():
         for j, answer in enumerate(answer_options):
             print(f"{j + 1}. {answer}")
 
-        user_answer = int(input("Inserisci il numero della risposta corretta: "))
-
-        try:
-            if 1 <= user_answer <= len(answer_options) and answer_options[user_answer - 1] == answers[i]['correct']:
-                print("Risposta corretta!\n")
-                score += 1
-            else:
-                print("Risposta errata.\n")
-        except ValueError:
-            print("Inserisci un numero valido.\n")
+        while True:
+            user_answer = input("Inserisci il numero della risposta corretta: ")
+            try:
+                user_answer = int(user_answer)
+                if 1 <= user_answer <= len(answer_options) and answer_options[user_answer - 1] == answers[i]['correct']:
+                    print("Risposta corretta!\n")
+                    score += 1
+                    break
+                elif user_answer > len(answer_options):
+                    print("Risposta non valida.\n")
+                else:
+                    print("Risposta errata!\n")
+                    break
+            except ValueError:
+                print("Inserisci un numero valido.\n")
 
     print(f"Punteggio finale: {score}/{len(questions)}")
 
@@ -191,5 +205,3 @@ def choose_quiz():
 
 
 choose_quiz()
-
-
