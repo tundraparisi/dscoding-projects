@@ -1,87 +1,175 @@
+'''
+IMPORTARE I PACCHETTI CHE MI SERVONO PER IL PROGETTO
+'''
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
-title_basics = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/title.basics.tsv", sep="\t", quoting=3, encoding='latin-1',
-                           engine='python', nrows=10000)
-ratings = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/ratings.tsv", sep="\t", quoting=3, encoding='latin-1',
-                      engine='python', nrows=10000)
-info_person = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/name.tsv", sep="\t", quoting=3, encoding='latin-1',
-                          engine='python', nrows=10000)
+'''
+IMPORTARE I DATASET E PULIRLI, METTENDO SOLO I CAMPI CHE MI SERVONO
+'''
+title_basics = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/title.basics.tsv", sep="\t", quoting=3,
+                           encoding='utf-8', engine='python', nrows=100000)
+info_person = pd.read_csv("//Users/ariannagirotto/Desktop/dataset/name.tsv", sep="\t", quoting=3, encoding='utf-8',
+                          engine='python', nrows=100000)
 
-def generate_question_answers_tb(num_q_title_basics):
+title_basics = title_basics[(title_basics != '\\N').all(axis=1)]
+info_person = info_person[(info_person != '\\N').all(axis=1)]
+
+easy_title_basics = title_basics[
+    (title_basics['startYear'].astype(int) >= 1990) &
+    (title_basics['startYear'].astype(int) <= 2023)]
+easy_title_basics = easy_title_basics.sort_values(by='startYear', ascending=False)
+
+medium_title_basics = title_basics[
+    (title_basics['startYear'].astype(int) >= 1940) &
+    (title_basics['startYear'].astype(int) < 1990)]
+easy_title_basics = easy_title_basics.sort_values(by='startYear', ascending=False)
+
+difficult_title_basics = title_basics[
+    (title_basics['startYear'].astype(int) >= 1800) &
+    (title_basics['startYear'].astype(int) < 1940)]
+
+easy_info_person = info_person[
+    (info_person['birthYear'].astype(int) >= 1960) &
+    (info_person['birthYear'].astype(int) <= 1987)]
+easy_info_person = easy_info_person.sort_values(by='birthYear', ascending=False)
+
+medium_info_person = info_person[
+    (info_person['birthYear'].astype(int) >= 1930) &
+    (info_person['birthYear'].astype(int) < 1960)]
+medium_info_person = medium_info_person.sort_values(by='birthYear', ascending=False)
+
+difficult_info_person = info_person[
+    (info_person['birthYear'].astype(int) >= 1800) &
+    (info_person['birthYear'].astype(int) < 1930)]
+'''
+FUNZIONI PER CREARE LE DOMANDE E LE RISPOSTE
+'''
+
+
+def title_basics_type1(df):
+    random_tconst = np.random.choice(df['tconst'], replace=False)
+    movie_title = df.loc[df['tconst'] == random_tconst, 'primaryTitle'].values[0]
+    question = f"In quale anno è uscito {movie_title}?"
+
+    right_answer = df.loc[df['tconst'] == random_tconst, 'startYear'].values[0]
+    wrong_answers = []
+    while len(wrong_answers) < 3:
+        wrong_answer = np.random.choice(df['startYear'])
+        if wrong_answer != right_answer and wrong_answer not in wrong_answers:
+            wrong_answers.append(wrong_answer)
+
+    answers = {
+        'correct': right_answer,
+        'incorrect': wrong_answers
+    }
+
+    return question, answers
+
+
+def title_basics_type2(df):
+    random_tconst = np.random.choice(df['tconst'], replace=False)
+    movie_title = df.loc[df['tconst'] == random_tconst, 'primaryTitle'].values[0]
+    question = f"Di quale genere è il film {movie_title}?"
+
+    right_answer = df.loc[df['tconst'] == random_tconst, 'genres'].values[0]
+    wrong_answers = []
+    while len(wrong_answers) < 3:
+        wrong_answer = np.random.choice(df['genres'])
+        if wrong_answer != right_answer and wrong_answer not in wrong_answers:
+            wrong_answers.append(wrong_answer)
+
+    answers = {
+        'correct': right_answer,
+        'incorrect': wrong_answers
+    }
+
+    return question, answers
+
+
+def title_basics_qa(df, num_type1_qa, num_type2_qa):
     questions = []
-    answers_list = []
-    for i in range(num_q_title_basics):
-        valid_movie = False
-        while not valid_movie:
-            random_tconst = np.random.choice(title_basics['tconst'], replace=False)
-            right_answer = title_basics.loc[title_basics['tconst'] == random_tconst, 'startYear'].values[0]
+    answers = []
 
-            # Controlla se right_answer è diverso da '\\N' prima di convertirlo in un intero
-            if right_answer != '\\N':
-                right_answer = int(right_answer)
-                if 1990 <= right_answer <= 2023:
-                    valid_movie = True
+    for _ in range(num_type1_qa):
+        question, answer = title_basics_type1(df)
+        questions.append(question)
+        answers.append(answer)
 
-        if valid_movie:
-            movie_title = title_basics.loc[title_basics['tconst'] == random_tconst, 'primaryTitle'].values[0]
-            questions.append(f"In quale anno è uscito {movie_title}?")
+    for _ in range(num_type2_qa):
+        question, answer = title_basics_type2(df)
+        questions.append(question)
+        answers.append(answer)
 
-            wrong_answers = []
-            while len(wrong_answers) < 3:
-                wrong_answer = np.random.choice(title_basics['startYear'])
-                if wrong_answer != '\\N':
-                    wrong_answer = int(wrong_answer)
-                    if wrong_answer != right_answer and wrong_answer not in wrong_answers and 1990 <= wrong_answer <= 2023:
-                        wrong_answers.append(wrong_answer)
-
-            answers = {
-                'correct': right_answer,
-                'incorrect': wrong_answers
-            }
-            answers_list.append(answers)
-
-    return questions, answers_list
+    return questions, answers
 
 
-def generate_question_answers_ip(num_q_info_person):
+def info_person_type1(df):
+    random_nconst = np.random.choice(df['nconst'], replace=False)
+    person_name = df.loc[df['nconst'] == random_nconst, 'primaryName'].values[0]
+    question = f"In che anno è nato/a {person_name}?"
+
+    right_answer = df.loc[df['nconst'] == random_nconst, 'birthYear'].values[0]
+    wrong_answers = []
+    while len(wrong_answers) < 3:
+        wrong_answer = np.random.choice(df['birthYear'])
+        if wrong_answer != right_answer and wrong_answer not in wrong_answers:
+            wrong_answers.append(wrong_answer)
+
+    answers = {
+        'correct': right_answer,
+        'incorrect': wrong_answers
+    }
+
+    return question, answers
+
+
+def info_person_type2(df):
+    random_nconst = np.random.choice(df['nconst'], replace=False)
+    person_name = df.loc[df['nconst'] == random_nconst, 'primaryName'].values[0]
+    question = f"Quali sono le principali professioni di {person_name}?"
+
+    right_answer = df.loc[df['nconst'] == random_nconst, 'primaryProfession'].values[0]
+    wrong_answers = []
+    while len(wrong_answers) < 3:
+        wrong_answer = np.random.choice(df['primaryProfession'])
+        if wrong_answer != right_answer and wrong_answer not in wrong_answers:
+            wrong_answers.append(wrong_answer)
+
+    answers = {
+        'correct': right_answer,
+        'incorrect': wrong_answers
+    }
+
+    return question, answers
+
+
+def info_person_qa(df, num_type1_qa, num_type2_qa):
     questions = []
-    answers_list = []
-    for j in range(num_q_info_person):
-        random_person = np.random.choice(info_person['nconst'], replace=False)
-        person_name = info_person.loc[info_person['nconst'] == random_person, 'primaryName'].values[0]
-        questions.append(f"Quali sono le principali professioni di {person_name}?")
+    answers = []
 
-        right_answer = info_person.loc[info_person['nconst'] == random_person, 'primaryProfession'].values[0]
-        wrong_answers = []
-        while len(wrong_answers) < 3:
-            wrong_answer = np.random.choice(info_person['primaryProfession'])
-            if wrong_answer != right_answer and wrong_answer not in wrong_answers:
-                wrong_answers.append(wrong_answer)
-        answers = {
-            'correct': right_answer,
-            'incorrect': wrong_answers
-        }
-        answers_list.append(answers)
-    return questions, answers_list
+    for _ in range(num_type1_qa):
+        question, answer = info_person_type1(df)
+        questions.append(question)
+        answers.append(answer)
+
+    for _ in range(num_type2_qa):
+        question, answer = info_person_type2(df)
+        questions.append(question)
+        answers.append(answer)
+
+    return questions, answers
 
 
-## stiamo definendo una funzione che ha come input il numero di domande che vogliamo generare di un tipo o dell'altro.
-## all'interno di questa si crea una variabile denominata 'questions' che servirà a contenere le domande che si creano
-## con una lista(in questo modo posso fare append).
-## per inserire le domande utilizzo 2 loop per cui per ogni elemento che è all'interno del range del numero delle domande
-## (che inserisco io quando utilizzo la funzione) deve randomizzare una tconst, una person, poi creare 2 varibiali una con il
-## nome del film e l'altra con il nome della persona e poi fare question append con i due pattern
-## infine mi deve ritornare le domande
+'''
+FUNZIONI CHE SUDDIVIDONO NEI VARI TIPI DI QUIZ
+'''
 
-## per cui moh se scrivo il numero di domande che voglio di ciascun pattern
-
-## distinguo i 3 quiz tra facile, medio e difficile con la percentuale di passaggio, per cui è facile se passi
-## con il 50% delle risposte esatte, medio se 60%, difficile se 70%.
 
 def easy():
-    title_basics_questions, title_basics_answers = generate_question_answers_tb(1)
-    info_person_questions, info_person_answers = generate_question_answers_ip(1)
+    title_basics_questions, title_basics_answers = title_basics_qa(easy_title_basics, 2, 2)
+    info_person_questions, info_person_answers = info_person_qa(easy_info_person, 2, 2)
 
     title_basics_pairs = list(zip(title_basics_questions, title_basics_answers))
     info_person_pairs = list(zip(info_person_questions, info_person_answers))
@@ -115,11 +203,24 @@ def easy():
             except ValueError:
                 print("Inserisci un numero valido.\n")
 
-        print(f"Punteggio finale: {score}/{len(questions)}")
+    print(f"Il punteggio finale è {score}/{len(questions)}")
+    final_score = score / len(questions)
+    percentuale_easy = final_score * 100
+    if percentuale_easy >= 50:
+        print(f"Congratulations! You have passed the easy quiz with {percentuale_easy}%")
+        if 50 <= percentuale_easy <= 80:
+            print(f"Good job! You have passed the test but there is still room for improvement. Try again!")
+        elif 80 < percentuale_easy <= 100:
+            print(f"Fantastic! You have a nice knowledge of film. Too easy? Try the medium quiz")
+    else:
+        print(f"Fail! You have done {percentuale_easy}% and you haven't passed the easy quiz. Are you living in a cave?Try "
+              f"again!")
+    return percentuale_easy
+
 
 def medium():
-    title_basics_questions, title_basics_answers = generate_question_answers_tb(1)
-    info_person_questions, info_person_answers = generate_question_answers_ip(1)
+    title_basics_questions, title_basics_answers = title_basics_qa(medium_title_basics, 1)
+    info_person_questions, info_person_answers = info_person_qa(medium_info_person, 1)
 
     title_basics_pairs = list(zip(title_basics_questions, title_basics_answers))
     info_person_pairs = list(zip(info_person_questions, info_person_answers))
@@ -153,12 +254,25 @@ def medium():
             except ValueError:
                 print("Inserisci un numero valido.\n")
 
-    print(f"Punteggio finale: {score}/{len(questions)}")
+    print(f"Il punteggio finale è {score}/{len(questions)}")
+    final_score = score / len(questions)
+    percentuale_medium = final_score * 100
+    if percentuale_medium >= 60:
+        print(f"Congratulations! You have passed the medium quiz with {percentuale_medium}%")
+        if 60 <= percentuale_medium <= 80:
+            print(f"Good job! You have passed the test but there is still room for improvement. Try again!")
+        elif 80 < percentuale_medium <= 100:
+            print(f"Fantastic! You have a very good knowledge of film. Too easy? Try the difficult quiz")
+    else:
+        print(
+            f"Fail! You have done {percentuale_medium}% and you haven't passed the medium quiz ( at least it was the medium "
+            f"and not the easy :) )Try again!")
+    return percentuale_medium
 
 
 def difficult():
-    title_basics_questions, title_basics_answers = generate_question_answers_tb(10)
-    info_person_questions, info_person_answers = generate_question_answers_ip(10)
+    title_basics_questions, title_basics_answers = title_basics_qa(difficult_title_basics, 1)
+    info_person_questions, info_person_answers = info_person_qa(difficult_info_person, 1)
 
     title_basics_pairs = list(zip(title_basics_questions, title_basics_answers))
     info_person_pairs = list(zip(info_person_questions, info_person_answers))
@@ -192,7 +306,25 @@ def difficult():
             except ValueError:
                 print("Inserisci un numero valido.\n")
 
-    print(f"Punteggio finale: {score}/{len(questions)}")
+    print(f"Il punteggio finale è {score}/{len(questions)}")
+    final_score = score / len(questions)
+    percentuale_diff = final_score * 100
+    if percentuale_diff >= 70:
+        print(f"Congratulations! You have passed the difficult quiz with {percentuale_diff}%")
+        if 70 <= percentuale_diff <= 90:
+            print(f"Good job! You have passed the test but there is still room for improvement. Try again!")
+        elif 90 < percentuale_diff <= 100:
+            print(f"Fantastic! You have an extraordinary knowledge of film. Too easy? I'm sorry but no room for "
+                  f"improvement for you: you are already a God of movies! I mean you know movies from the '800...")
+    else:
+        print(
+            f"Fail! You have done {percentuale_diff}% and you haven't passed the difficult quiz. I get it I also didn't "
+            f"pass it")
+    return percentuale_diff
+
+'''
+FUNZIONE PER SCEGLIERE IL QUIZ CHE VUOI
+'''
 
 
 def choose_quiz():
@@ -200,6 +332,7 @@ def choose_quiz():
         choosen_quiz = False
         while not choosen_quiz:
             user_answer = input("Inserisci il quiz che vuoi fare tra easy, medium e difficult: ")
+            user_answer = user_answer.lower()
             if user_answer == "easy":
                 easy()
                 choosen_quiz = True
@@ -212,7 +345,7 @@ def choose_quiz():
             else:
                 print("Quiz non valido. Inserisci un quiz valido.")
         repeat = input("Vuoi ripetere il quiz? (Sì o No): ")
-        if repeat.lower() != "sì":
+        if repeat.lower() != "sì" and repeat.lower() != "si":
             break
 
 
