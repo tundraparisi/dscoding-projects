@@ -1,30 +1,16 @@
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 import math
+"""
+-- Documentation --
+
+"""
 
 
-def convert(db, column):
-    if column == 'Latitude':
-        for x in range(len(db[column].index)):
-            if db.at[x, column][-1] == 'N':
-                db.at[x, column] = '+' + db.at[x, column][0:len(db.at[x, column]) - 1]
-            elif db.at[x, column][-1] == 'S':
-                db.at[x, column] = '-' + db.at[x, column][0:len(db.at[x, column]) - 1]
-
-    elif column == 'Longitude':
-        for x in range(len(db[column].index)):
-            if db.at[x, column][-1] == 'E':
-                db.at[x, column] = '+' + db.at[x, column][0:len(db.at[x, column]) - 1]
-            elif db.at[x, column][-1] == 'W':
-                db.at[x, column] = '-' + db.at[x, column][0:len(db.at[x, column]) - 1]
-
-    return db
-
-
-def create_map(ds, dw):
+def create_map(ds, dw, legend = False):
     # create a world map
     axis = dw.plot(color='grey', edgecolor='black')
-    ds.plot(column='AverageTemperature', ax=axis, markersize=80, legend=True, legend_kwds={'shrink': 0.3})
+    ds.plot(column='AverageTemperature', ax=axis, markersize=80, legend=legend, legend_kwds={'shrink': 0.3})
     plt.title('Average Temperatures in World Major Cities ', fontsize=15)
     fig = plt.gcf()
     fig.set_size_inches(20, 16)
@@ -35,7 +21,7 @@ def create_map(ds, dw):
 def create_map_date(ds, dw, date):
     filtered_ds = ds[ds['dt'] == date]
     if not filtered_ds.empty:
-        create_map(filtered_ds, dw)
+        create_map(filtered_ds, dw, True)
     else:
         print('Data not available for the given date.')
 
