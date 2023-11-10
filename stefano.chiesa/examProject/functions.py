@@ -142,7 +142,7 @@ def calculate_distance(city1, city2, route):
         return 1000000000
     else:
         return distance
-    
+
 
 
 def warmest_closest_city(current_city, ds, route):
