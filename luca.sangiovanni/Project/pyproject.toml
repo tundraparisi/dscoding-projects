@@ -8,6 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 geopandas = "^0.14.0"
+plotly-express = "^0.4.1"
+matplotlib = "^3.8.0"
 
 
 [build-system]
