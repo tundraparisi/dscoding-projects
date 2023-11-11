@@ -12,7 +12,7 @@ class Map:
         # create a world map
         axis = self.dw.plot(color='grey', edgecolor='black')
         self.ds.plot(column='AverageTemperature', ax=axis, markersize=80, legend=legend, legend_kwds={'shrink': 0.3})
-        plt.title('Average Temperatures in World Major Cities', fontsize=15)
+        plt.title('Average Temperatures in World Major Cities C°', fontsize=15)
         fig = plt.gcf()
         fig.set_size_inches(20, 16)
         plt.show()
@@ -31,12 +31,12 @@ class Map:
         fig, ax = plt.subplots(figsize=(20, 16))
         axis = self.dw.plot(ax=ax, color='grey', edgecolor='black')
         dates.sort()
-        print(dates)
+
         def update(frame):
             current_date = dates[frame]
             filtered_cities = self.ds[self.ds['dt'] == current_date]
             scatter = filtered_cities.plot(column='AverageTemperature', ax=axis, markersize=80)
-            plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=25)
+            plt.title(f'Average Temperatures in World Major Cities C° ({current_date})', fontsize=25)
             return scatter
 
         def init():
@@ -52,29 +52,9 @@ class Map:
         animation.save('temperature_animation_dates.gif', fps=1)
 
     def date_map_gif(self, min_date, max_date):
-        fig, ax = plt.subplots(figsize=(20, 16))
-        axis = self.dw.plot(ax=ax, color='grey', edgecolor='black')
         panda_dates = self.ds[(self.ds['dt'] >= min_date) & (self.ds['dt'] <= max_date)]
-        dates = panda_dates['dt'].tolist()
-
-        def update(frame):
-            current_date = dates[frame]
-            filtered_cities = self.ds[self.ds['dt'] == current_date]
-            scatter = filtered_cities.plot(column='AverageTemperature', ax=axis, markersize=80)
-            plt.title(f'Average Temperatures in World Major Cities ({current_date})', fontsize=25)
-            return scatter
-
-        def init():
-            # create an empty color with the appropriate colormap and normalization
-            sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(vmin=-80, vmax=60))
-            sm.set_array([])  # empty array for the data range
-            # add the color to the figure
-            cbar = plt.colorbar(sm, ax=ax, fraction=0.02, pad=0.04)
-            cbar.ax.tick_params(labelsize=14)
-            return cbar
-
-        animation = FuncAnimation(fig, update, frames=len(dates), interval=250, init_func=init)
-        animation.save('temperature_animation.gif', fps=1)
+        dates = panda_dates['dt'].unique().tolist()
+        self.create_map_gif(dates)
 
     def create_map_range(self, start_date, end_date):
         filtered_data = self.ds[(self.ds['dt'] >= start_date) & (self.ds['dt'] <= end_date)]
