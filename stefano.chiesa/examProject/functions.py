@@ -30,6 +30,7 @@ def create_map_gif(ds, dw, dates):
 
     fig, ax = plt.subplots(figsize=(20, 16))
     axis = dw.plot(ax=ax, color='grey', edgecolor='black')
+    dates.sort()
 
     def update(frame):
         current_date = dates[frame]
@@ -65,10 +66,10 @@ def date_map_gif(ds, dw, min_date, max_date):
         return scatter
 
     def init():
-        # Create an empty colorbar with the appropriate colormap and normalization
+        # create an empty color with the appropriate colormap and normalization
         sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(vmin=-80, vmax=60))
         sm.set_array([])  # empty array for the data range
-        # Add the colorbar to the figure
+        # add the color to the figure
         cbar = plt.colorbar(sm, ax=ax, fraction=0.02, pad=0.04)
         cbar.ax.tick_params(labelsize=14)
         return cbar
