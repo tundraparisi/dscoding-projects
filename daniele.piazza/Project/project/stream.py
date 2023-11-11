@@ -26,9 +26,9 @@ def load_map_data(location_data):
     return vis
 
 def create_html(major,all):
-    major.bubble(10).write_html("bubble_major.html")
+    major.bubble().write_html("bubble_major.html")
     major.bubble_range().write_html("range_major.html")
-    all.bubble(2).write_html("bubble_all.html")
+    all.bubble().write_html("bubble_all.html")
     all.bubble_range().write_html("range_all.html")
 
 location_major = load_location(major_path, api_key)
@@ -47,7 +47,7 @@ def load_html(path):
 def main():
     page = st.selectbox("", ("General Data", "City Information"))
     st.title("Climate Data Analysis")
-    dataset = st.selectbox("Select a dataset", ("Top cities", "All cities"))
+    dataset = st.radio("Select a dataset", ("Top cities", "All cities"))
     if dataset == "Top cities":
         location = location_major
         st.write("This dataset contains data about the major cities of the world")
@@ -69,10 +69,18 @@ def main():
         #st.plotly_chart(vis.show_locations())
         st.subheader("Range Heatmap")
         st.text("The heatmap shows the range (max-min) of temperatures for each city in the dataset")
-        st.components.v1.html(range, width=1400, height=800, scrolling=True)
+        number_range = st.number_input("Select the number of cities to show in the range map from 1 to 1000, leave empty if you want to see all the cities", min_value=1, max_value=1000, value=None)
+        if number_range is None:
+            st.components.v1.html(range, width=1400, height=800, scrolling=True)
+        else:
+            st.plotly_chart(vis.bubble_range(number_range))
         st.subheader("Heatmap")
         st.text("The heatmap shows the average temperature for each city in the dataset")
-        st.components.v1.html(bubble, width=1400, height=800, scrolling=True)
+        number_temp = st.number_input("Select the number of cities to show in the temperature map from 1 to 1000, leave empty if you want to see all the cities", min_value=1, max_value=1000, value=None)
+        if number_temp is None:
+            st.components.v1.html(bubble, width=1400, height=800, scrolling=True)
+        else:
+            st.plotly_chart(vis.bubble(number_temp))
     elif page == "City Information":
         country = location.data['Country'].unique()
         country.sort()

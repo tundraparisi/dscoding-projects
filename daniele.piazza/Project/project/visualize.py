@@ -7,6 +7,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import numpy as np
 import plotly.graph_objects as go
+from sklearn.preprocessing import MinMaxScaler
 
 class Visualize:
     def __init__(self, data):
@@ -31,7 +32,7 @@ class Visualize:
         self.data_year.drop(columns=['AvailableMonths'], inplace=True)
 
     def fig_layout(self,fig):
-        fig.update_layout(width=1200,height=600,margin={"r":0,"t":0,"l":0,"b":0})
+        fig.update_layout(width=1300,height=700,margin={"r":0,"t":0,"l":0,"b":0})
         return fig
     
     def show_locations(self):
@@ -87,13 +88,17 @@ class Visualize:
         city_data = self.data[(self.data['City_Country'] == city_country) & (self.data['Year'] == year)]
         fig = px.line(city_data, x='dt', y='AverageTemperature', markers=True)
         return self.fig_layout(fig)
-    
-    def bubble_range(self):
-        self.data_year["Range"] = self.data_year['MaxTemp'] - self.data_year['MinTemp']
-        self.data_year["Size"] =  self.data_year['Range']/10
-        min  = self.data_year['Range'].min()
-        max = self.data_year['Range'].max()
-        fig = px.scatter_mapbox(self.data_year, lat='Latitude', lon='Longitude', color="Range", size="Size",
+
+    def bubble_range(self, n=None):
+        df = self.data_year.copy()
+        df["Range"] = df['MaxTemp'] - df['MinTemp']
+        scaler = MinMaxScaler()
+        df["Size"] =  scaler.fit_transform(df[['Range']])
+        if n is not None:
+            df = df.groupby('Year').apply(lambda x: x.nlargest(n, 'Range')).reset_index(drop=True)
+        min = df['Range'].min()
+        max = df['Range'].max()
+        fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', color="Range", size="Size",
                                 color_continuous_scale=px.colors.diverging.Portland, zoom=1, animation_frame='Year',
                                 hover_name="City_Country", mapbox_style="open-street-map", range_color=(min, max),template='plotly_dark',
                                 hover_data={
@@ -105,25 +110,28 @@ class Visualize:
                                     "YearlyAverage": False,
                                     "Size": False
                                 })
-        self.data_year.drop(columns=['Range', 'Size'], inplace=True)
         return self.fig_layout(fig)
-    
-    def bubble(self,size):
-        min = self.data_year['MinTemp'].min()
-        max = self.data_year['MinTemp'].max()
-        self.data_year['Size'] = [size]*len(self.data_year)
-        fig = px.scatter_mapbox(self.data_year,
+
+    def bubble(self,n=None):
+        df = self.data_year.copy()
+        min = df['YearlyAverage'].min()
+        max = df['YearlyAverage'].max()
+        if n is not None:
+            df = df.groupby('Year').apply(lambda x: x.nlargest(n, 'YearlyAverage')).reset_index(drop=True)
+        bubble_counts = df['Year'].value_counts()
+        df['Size'] = df['Year'].apply(lambda x: 1000 / np.log((bubble_counts[x]) + 1))
+        fig = px.scatter_mapbox(df,
                                 lat='Latitude',
                                 lon='Longitude',
                                 color="YearlyAverage",
                                 hover_name="City_Country",
                                 size="Size",
-                                size_max=size,
                                 zoom=1,
                                 animation_frame="Year",
                                 mapbox_style="open-street-map",
                                 range_color=(min,max),
-                                color_continuous_scale=px.colors.diverging.Portland,template='plotly_dark',
+                                color_continuous_scale=px.colors.diverging.Portland,
+                                template='plotly_dark',
                                 hover_data={
                                     "YearlyAverage": True,
                                     "City_Country": False,
@@ -132,7 +140,6 @@ class Visualize:
                                     "Longitude": False,
                                     "Size":False
                                 })
-        self.data_year.drop(columns=['Size'], inplace=True)
         return self.fig_layout(fig)
     
     def predict_city_temperature(self,city_country):
@@ -155,15 +162,18 @@ class Visualize:
         return self.fig_layout(fig)
     
     def additional_statistics(self):
-        city_stats = self.data_year.groupby('City_Country')['YearlyAverage'].agg(['mean', 'median', 'std']).reset_index()
-        city_stats.columns = ['City', 'AverageTemperatureMean', 'AverageTemperatureMedian', 'AverageTemperatureStd']
+        city_stats = self.data_year.groupby('City_Country').agg(
+            AverageTemperature=('YearlyAverage', 'mean'),
+            MinTemp=('YearlyAverage', 'min'),
+            MaxTemp=('YearlyAverage', 'max'),
+            Std=('YearlyAverage','std')).reset_index().round(2)
         return city_stats
     
     def boxplot(self,city_country):
         df = self.data[self.data['City_Country'] == city_country]
         df['Month'] = df['dt'].dt.month
         df['Year'] = df['dt'].dt.year  
-        df['Month_Name'] = df['dt'].dt.strftime('%B')  # Add a column for the month name
+        df['Month_Name'] = df['dt'].dt.strftime('%B')  
         colors = px.colors.qualitative.Dark24
         month_labels = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
         fig = go.Figure()
