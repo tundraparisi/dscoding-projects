@@ -9,12 +9,12 @@ imdb_data = DataManager(
 )
 
 # Get data for movie release years
-release_years_data = imdb_data.get_movie_release_years()
+movie_data = imdb_data.get_movie()
 print("Movie Release Years:")
-print(release_years_data)
+print(movie_data)
 
 # Get data for movie genres
-genre_data = imdb_data.get_movie_genres()
+genre_data = imdb_data.get_genre_movie()
 print("\nMovie Genres:")
 print(genre_data)
 
