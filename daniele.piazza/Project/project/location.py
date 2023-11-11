@@ -56,6 +56,3 @@ class Location:
         self.data.drop(columns='City_Country', inplace=True)
         self.data.to_csv(self.path, index=False)
 
-    def additional_statistics(self):
-        city_stats = self.data.groupby('City')['AverageTemperature'].agg(['mean', 'median', 'std']).reset_index()
-        return city_stats
