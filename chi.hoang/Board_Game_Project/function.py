@@ -1,43 +1,20 @@
 import pandas as pd
-import numpy as np
+from scipy.stats import beta
 
-def Bayesian_average_function(row):
-    n = row['rating_number']
+
+def function_bayesian_average(row):
     m = row['rating_average']
-    bayesian_avg = (prior_weight*prior_mean + m*n)/(prior_weight+n)
+    n = row['rating_number']
+    bayesian_avg = (prior_mean * prior_weight + m * n) / (prior_weight + n)
     return bayesian_avg
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# beta distribution function to calculate bayesian average
+def calculate_bayesian_average(rating_sum, rating_number, prior_weight, prior_average):
+    alpha = prior_weight + rating_sum
+    beta_ = prior_weight + rating_number - rating_sum
+    mean = beta.stats(alpha, beta_, moments='m')
+    return mean
 
 
 

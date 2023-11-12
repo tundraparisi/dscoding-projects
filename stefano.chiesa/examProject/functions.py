@@ -1,30 +1,16 @@
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 import math
+"""
+-- Documentation --
+
+"""
 
 
-def convert(db, column):
-    if column == 'Latitude':
-        for x in range(len(db[column].index)):
-            if db.at[x, column][-1] == 'N':
-                db.at[x, column] = '+' + db.at[x, column][0:len(db.at[x, column]) - 1]
-            elif db.at[x, column][-1] == 'S':
-                db.at[x, column] = '-' + db.at[x, column][0:len(db.at[x, column]) - 1]
-
-    elif column == 'Longitude':
-        for x in range(len(db[column].index)):
-            if db.at[x, column][-1] == 'E':
-                db.at[x, column] = '+' + db.at[x, column][0:len(db.at[x, column]) - 1]
-            elif db.at[x, column][-1] == 'W':
-                db.at[x, column] = '-' + db.at[x, column][0:len(db.at[x, column]) - 1]
-
-    return db
-
-
-def create_map(ds, dw):
+def create_map(ds, dw, legend = False):
     # create a world map
     axis = dw.plot(color='grey', edgecolor='black')
-    ds.plot(column='AverageTemperature', ax=axis, markersize=80, legend=True, legend_kwds={'shrink': 0.3})
+    ds.plot(column='AverageTemperature', ax=axis, markersize=80, legend=legend, legend_kwds={'shrink': 0.3})
     plt.title('Average Temperatures in World Major Cities ', fontsize=15)
     fig = plt.gcf()
     fig.set_size_inches(20, 16)
@@ -35,7 +21,7 @@ def create_map(ds, dw):
 def create_map_date(ds, dw, date):
     filtered_ds = ds[ds['dt'] == date]
     if not filtered_ds.empty:
-        create_map(filtered_ds, dw)
+        create_map(filtered_ds, dw, True)
     else:
         print('Data not available for the given date.')
 
@@ -44,6 +30,7 @@ def create_map_gif(ds, dw, dates):
 
     fig, ax = plt.subplots(figsize=(20, 16))
     axis = dw.plot(ax=ax, color='grey', edgecolor='black')
+    dates.sort()
 
     def update(frame):
         current_date = dates[frame]
@@ -79,10 +66,10 @@ def date_map_gif(ds, dw, min_date, max_date):
         return scatter
 
     def init():
-        # Create an empty colorbar with the appropriate colormap and normalization
+        # create an empty color with the appropriate colormap and normalization
         sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(vmin=-80, vmax=60))
         sm.set_array([])  # empty array for the data range
-        # Add the colorbar to the figure
+        # add the color to the figure
         cbar = plt.colorbar(sm, ax=ax, fraction=0.02, pad=0.04)
         cbar.ax.tick_params(labelsize=14)
         return cbar
@@ -142,7 +129,7 @@ def calculate_distance(city1, city2, route):
         return 1000000000
     else:
         return distance
-    
+
 
 
 def warmest_closest_city(current_city, ds, route):
