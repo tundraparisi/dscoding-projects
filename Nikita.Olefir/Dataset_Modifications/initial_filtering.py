@@ -1,15 +1,16 @@
 import pandas as pd
 
+
 def dataframe_unnecessary_columns_deletion(dataframe: pd.DataFrame):
-    """ This function deletes the necessary columns from 
+    """This function deletes the necessary columns from
     the pandas dataframe with data about chess games
 
     Argumenst:
         dataframe (pd.dataframe): the pandas dataframe that was created from the csv file with information about chess games
 
     Returns:
-       pd.DataFrame: returns a pandas dataframe with only necessary columns:
-       1)id 
+       pd.DataFrame: returns a pandas dataframe. It returns only rated games with only necessary columns:
+       1)id
        2)turns
        3)victory_status
        4)winner
@@ -31,6 +32,17 @@ def dataframe_unnecessary_columns_deletion(dataframe: pd.DataFrame):
 
     Examples:
         dataframe_unnecessary_columns_deletion (dataframe)
-    """    
+    """
+    dataframe = dataframe[dataframe["rated"]]
     
-    return dataframe.drop(columns=['rated','created_at','last_move_at', 'increment_code','white_id','black_id'], axis =1)
+    return dataframe.drop(
+        columns=[
+            "rated",
+            "created_at",
+            "last_move_at",
+            "increment_code",
+            "white_id",
+            "black_id",
+        ],
+        axis=1,
+    )
