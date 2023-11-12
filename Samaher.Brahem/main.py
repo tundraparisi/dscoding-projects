@@ -1,5 +1,6 @@
 from data import DataManager
 
+# Opening the connection
 imdb_data = DataManager(
     dbname='imdb',
     user='samaher',
@@ -8,16 +9,8 @@ imdb_data = DataManager(
     port='5432'
 )
 
-# Get data for movie release years
-release_years_data = imdb_data.get_movie_release_years()
-print("Movie Release Years:")
-print(release_years_data)
-
-# Get data for movie genres
-genre_data = imdb_data.get_movie_genres()
-print("\nMovie Genres:")
-print(genre_data)
 
 
-# Close the connection when done
+
+# Closing the connection
 imdb_data.close_connection()
