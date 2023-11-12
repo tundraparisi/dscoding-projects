@@ -31,7 +31,7 @@ def dataframe_unnecessary_columns_deletion(dataframe: pd.DataFrame):
     ---
 
     Examples:
-        dataframe_unnecessary_columns_deletion (dataframe)
+        dataframe_unnecessary_columns_deletion(dataframe)
     """
     dataframe = dataframe[dataframe["rated"]]
     
