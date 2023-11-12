@@ -8,7 +8,7 @@ To create a system that is to select an opening for a chess player based on seve
 
 1) The ELO rating of the player (it shows how skillful the player is).
 2) The side person plays (either for white or black pieces).
-3) The preferred game time (consult with [this source](https://chessfox.com/13-different-types-of-chess-openings/#Flank-Openings)).
+3) The preferred game type (consult with [this source](https://chessfox.com/13-different-types-of-chess-openings/#Flank-Openings)).
 4) Initial steps of the opponent.
 5) Preference about the lenght of the game (in terms of turns per game)
 
@@ -35,4 +35,6 @@ I use the [following Kaggle dataset](https://www.kaggle.com/datasets/datasnaek/c
 - [X] Create a README file
 - [X] Write a function for dataset opening
 - [X] Download the dataset
-- [ ] Redact the dataset with pandas.
+- [X] Create a function to delete unecessary columns
+- [ ] Create a colimn with an average ELO rating of games
+- [ ] Calculate the average rating of games for each and every game
