@@ -208,6 +208,16 @@ test = ["Pillow", "contourpy[test-no-images]", "matplotlib"]
 test-no-images = ["pytest", "pytest-cov", "wurlitzer"]
 
 [[package]]
+name = "countryinfo"
+version = "0.1.2"
+description = "countryinfo is a python module for returning data about countries, ISO info and states/provinces within them."
+optional = false
+python-versions = ">3.0.0"
+files = [
+    {file = "countryinfo-0.1.2-py3-none-any.whl", hash = "sha256:fd518b3fd8899f6520518320ac17b67bf410c7db5044c61cb191f802bb85c34d"},
+]
+
+[[package]]
 name = "cycler"
 version = "0.12.1"
 description = "Composable style cycles"
@@ -1122,4 +1132,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "cba647b400c80c01f7db93093ceefbe1af395d5216d6252fc02475a9af281946"
+content-hash = "e23787b35d32ea4ff539bedc289a6cbefcc41a1ed50125dc4ef5d7fc15436276"
