@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def average_elo(dataframe: pd.DataFrame):
-    """_summary_
+    """This functions creates a column that contains the ELO of each game (the average of the ratings of players)
 
     Argumens:
         dataframe (pd.DataFrame): a pandas dataframe that contains information about the ELO rating of players
@@ -13,7 +13,7 @@ def average_elo(dataframe: pd.DataFrame):
     ---
 
     Examples:
-        dataframe["average_elo"] = (dataframe["average_elo"]+dataframe["black_rating"])
+        average_elo(dataframe_name)
     """
     
     dataframe["average_elo"] = (
