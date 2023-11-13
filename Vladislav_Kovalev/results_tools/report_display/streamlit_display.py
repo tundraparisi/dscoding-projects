@@ -2,10 +2,18 @@ import streamlit as st
 import pandas as pd
 from utils import filteringName, filteringTask
 
-dataFirstStrategy = pd.read_excel("./results/first_strategy.xlsx")
-dataSecondStrategy = pd.read_excel("./results/second_strategy.xlsx")
-dataThirdStrategy = pd.read_excel("./results/third_strategy.xlsx")
-dataFourthStrategy = pd.read_excel("./results/fourth_strategy.xlsx")
+dataFirstStrategy = pd.read_excel(
+    "/Users/vladislavkovalev/Desktop/git/UniMi-DSE-Master/1 year 1 thrimester/Pyhton/dscoding-projects/Vladislav_Kovalev/results_tools/report_display/results/first_strategy.xlsx"
+)
+dataSecondStrategy = pd.read_excel(
+    "/Users/vladislavkovalev/Desktop/git/UniMi-DSE-Master/1 year 1 thrimester/Pyhton/dscoding-projects/Vladislav_Kovalev/results_tools/report_display/results/second_strategy.xlsx"
+)
+dataThirdStrategy = pd.read_excel(
+    "/Users/vladislavkovalev/Desktop/git/UniMi-DSE-Master/1 year 1 thrimester/Pyhton/dscoding-projects/Vladislav_Kovalev/results_tools/report_display/results/third_strategy.xlsx"
+)
+dataFourthStrategy = pd.read_excel(
+    "/Users/vladislavkovalev/Desktop/git/UniMi-DSE-Master/1 year 1 thrimester/Pyhton/dscoding-projects/Vladislav_Kovalev/results_tools/report_display/results/fourth_strategy.xlsx"
+)
 
 # Reports generated for strategies
 for indexStrategy, dataStrategy in enumerate(
