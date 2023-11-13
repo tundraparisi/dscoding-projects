@@ -44,7 +44,7 @@ class Visualize:
         self.backgroundColor = config['theme']['backgroundColor']
         self.secondaryBackgroundColor = config['theme']['secondaryBackgroundColor']
         self.textColor = config['theme']['textColor']
-        
+
     def fig_layout(self,fig):
         fig.update_layout({'paper_bgcolor': self.backgroundColor},
                           width=1300,
@@ -117,48 +117,43 @@ class Visualize:
                                 })
         return self.fig_layout(fig)
 
-
-    def line_(self,city_country):
-        city_data = self.data_year[(self.data_year['City_Country'] == city_country)]
-        fig = px.line(city_data, x='Year', y='YearlyAverage', markers=True)
-        return self.fig_layout(fig)
-
     def line_year(self,city_country,year):
         city_data = self.data[(self.data['City_Country'] == city_country) & (self.data['Year'] == year)]
-        fig = px.line(city_data, x='dt', y='AverageTemperature', markers=True)
+        fig = px.line(city_data, x='dt', y='AverageTemperature', markers=True, color_discrete_sequence=[self.primaryColor])
         return self.fig_layout(fig)
 
-    def line(self,city_country):
+    def line(self, city_country):
         city_data = self.data_year[(self.data_year['City_Country'] == city_country)]
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=city_data['Year'],
-            y=city_data['YearlyAverage'],
+            y=city_data['YearlyAverage'] - city_data['AverageTemperatureUncertainty'],
+            marker=dict(color=self.primaryColor),
+            line=dict(width=0),
             mode='lines',
-            name='Average Temperature',
+            showlegend=False,
+            name='Lower bound'
         ))
         fig.add_trace(go.Scatter(
             x=city_data['Year'],
             y=city_data['YearlyAverage'] + city_data['AverageTemperatureUncertainty'],
             mode='lines',
-            marker=dict(color="#444"),
+            marker=dict(color=self.primaryColor),
             line=dict(width=0),
+            fill='tonexty',
+            fillcolor=self.secondaryBackgroundColor,
             showlegend=False,
-            name='Upper bound',
+            name='Upper bound'
         ))
         fig.add_trace(go.Scatter(
             x=city_data['Year'],
-            y=city_data['YearlyAverage'] - city_data['AverageTemperatureUncertainty'],
-            marker=dict(color="#444"),
-            line=dict(width=0),
+            y=city_data['YearlyAverage'],
             mode='lines',
-            fillcolor='rgba(68, 68, 68, 0.3)',
-            fill='tonexty',
-            showlegend=False,
-            name='Lower bound',
+            name='Average Temperature',
+            line=dict(color=self.primaryColor)
         ))
         return self.fig_layout(fig)
-    
+        
     def bubble_range(self, n=None):
         df = self.data_year.copy()
         df["Range"] = (df['MaxTemp'] - df['MinTemp']).round(2)
@@ -237,13 +232,13 @@ class Visualize:
         future_predicted_temperatures = lin_reg_poly.predict(future_years_poly)
         fig = px.scatter(x=years.flatten(),
                          y=temperatures,
-                         color_discrete_sequence=['green'],
+                         color_discrete_sequence=[self.secondaryBackgroundColor],
                          labels={'x': 'Year', 'y': 'Temperature'}
                          )
         fig.add_scatter(x=years.flatten(),
                         y=predicted_temperatures,
                         mode='lines',
-                        line=dict(color='blue'),
+                        line=dict(color=self.primaryColor),
                         name='Polynomial Regression'
                         )
         fig.add_scatter(x=range,
@@ -287,7 +282,7 @@ class Visualize:
                             y=month_temperatures, 
                             mode='markers', 
                             name=month_name, 
-                            marker=dict(color=colors[month-1], size=5, opacity=0.1),
+                            marker=dict(color=colors[month-1], size=5, opacity=0.3),
                             showlegend=False,
                             hovertemplate='Temperature: %{y}<br>Year: %{text}', 
                             text=month_data['Year']
