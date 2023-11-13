@@ -2,7 +2,9 @@ from opencage.geocoder import OpenCageGeocode
 
 
 class DownloadNewCoordinates:
-    def MCconversion():
+
+    def MCconversion(self):
+
         majorCities = tempByMajorCity[["City", "Country", "Latitude", "Longitude"]].groupby(
             ["City"]).first().reset_index()
         key = "1867ae77e86948d9a54c0a7bb9f3d0bd"
@@ -25,6 +27,7 @@ class DownloadNewCoordinates:
 
 
 class Conversion():
+
     cities1 = cities.iloc[:400, :]
     cities2 = cities.iloc[400:800, :]
     cities3 = cities.iloc[800:1200, :]
@@ -35,7 +38,8 @@ class Conversion():
     cities8 = cities.iloc[2800:3200, :]
     cities9 = cities.iloc[3200:, :]
 
-    def citiesConversion1():
+    def citiesConversion1(self):
+
         key = "1867ae77e86948d9a54c0a7bb9f3d0bd"
         geocoder = OpenCageGeocode(key)
         list_lat = []
@@ -55,7 +59,8 @@ class Conversion():
         cities1.to_csv(path + "\cities1.csv")
 
 
-    def list_of_cities_corrected():
+    def list_of_cities_corrected(self):
+
         cities1 = pd.read_csv(path + "\cities1.csv", index_col=0)
         cities2 = pd.read_csv(path + "\cities2.csv", index_col=0)
         cities3 = pd.read_csv(path + "\cities3.csv", index_col=0)

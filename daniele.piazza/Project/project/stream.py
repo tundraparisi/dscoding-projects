@@ -2,14 +2,16 @@ import streamlit as st
 from location import Location
 from visualize import Visualize
 import pandas as pd
+import os
+#Change .streamlit/config.toml to change the theme color, the map will change accordingly
 
-api_key = pd.read_csv("/Users/dani/Desktop/api_key.txt",header=None)[0][0]
+update = False # Set to True if you want to update the coordinates of the cities in the csv files
+
+st.set_page_config(layout="wide")
+api_key = pd.read_csv("/Users/dani/Desktop/api_key.txt",header=None)[0][0] #change with your google api key
 all_path = "Data/GlobalLandTemperaturesByCity.csv"
 major_path = "Data/GlobalLandTemperaturesByMajorCity.csv"
 
-st.set_page_config(layout="wide")
-
-update = False # Set to True if you want to update the coordinates of the cities in the file
 @st.cache_data
 def load_location(path, api_key):
     location = Location(path, api_key)
@@ -22,72 +24,88 @@ def load_map_data(location_data):
     vis = Visualize(location_data)
     return vis
 
-@st.cache_data()
-def load_bubble(_vis, size:None):
-    if size is None:
-        return _vis.bubble_range()
-    return _vis.bubble(size)
-
 location_major = load_location(major_path, api_key)
 location_all = load_location(all_path, api_key)
-major_map = load_map_data(location_major.data)
-all_map = load_map_data(location_all.data)
-major_bubble = load_bubble(major_map, 10)
-all_bubble = load_bubble(all_map, 4)
-major_range = major_map.bubble_range()
-all_range = all_map.bubble_range()
+major = load_map_data(location_major.data)
+all = load_map_data(location_all.data)
 
+def create_html():
+    major.bubble().write_html("bubble_major.html")
+    major.bubble_range().write_html("range_major.html")
+    all.bubble().write_html("bubble_all.html")
+    all.bubble_range().write_html("range_all.html")
+
+@st.cache_data
+def load_html(path):
+    if not os.path.exists(path):
+        create_html()
+    with open(path, 'r') as f:
+        return f.read()
+    
 def main():
-    page = st.selectbox("", ("General Data", "City Information"))
-    st.title("Climate Data Analysis")
-    dataset = st.selectbox("Select a dataset", ("Major", "All"))
-    if dataset == "Major":
+    page = st.selectbox("Choose a page", ("General Climate Data", "Specific City Information"))
+    st.title("Global Climate Data Analysis")
+    dataset = st.radio("Choose a dataset", ("Major cities", "All cities"))
+    if dataset == "Major cities":
         location = location_major
-        st.write("This dataset contains data about the major cities of the world")
-        vis = major_map
-        bubble = major_bubble
-        range = major_range
+        st.write("This dataset includes climate data from major cities around the world.")
+        vis = major
+        bubble = load_html("bubble_major.html")
+        range = load_html("range_major.html")
     else:
         location = location_all
-        st.write("This dataset contains data about all the cities of the world")
-        vis = all_map
-        bubble = all_bubble
-        range = all_range
-    if page == "General Data":
-        st.header("General Data")
-        st.header("Statistics about the dataset")
-        city_stats = location.additional_statistics()
-        st.write("", city_stats)
-        #st.subheader("General Map")
-        #st.plotly_chart(vis.show_locations())
-        st.subheader("Heatmap")
-        #st.plotly_chart(vis.heatmap())
-        st.plotly_chart(bubble)
-        st.subheader("Range Heatmap")
-        st.plotly_chart(range)
-    elif page == "City Information":
+        st.write("This dataset includes climate data from all cities around the world.")
+        vis = all
+        bubble = load_html("bubble_all.html")
+        range = load_html("range_all.html")
+    if page == "General Climate Data":
+        st.header("General Climate Data")
+        st.header("Dataset Statistics")
+        city_stats = vis.additional_statistics()
+        st.dataframe(city_stats, width=1400, height=420)
+        max = vis.data_year['City_Country'].nunique()
+        st.subheader("Temperature Range Heatmap")
+        st.text("This heatmap displays the range (max-min) of temperatures for each city in the dataset.")
+        number_range = st.number_input("Choose the number of cities with the highest temperature range to display on the map. Enter a number from 1 to {}. Leave empty to display all cities.".format(max), min_value=1, max_value=max, value=None)
+        if number_range is None:
+            st.components.v1.html(range, width=1400, height=800, scrolling=True)
+        else:
+            st.plotly_chart(vis.bubble_range(number_range))
+        st.subheader("Average Temperature Heatmap")
+        st.text("This heatmap displays the average temperature for each city in the dataset.")
+        number_temp = st.number_input("Choose the number of hottest cities to display on the temperature map. Enter a number from 1 to {}. Leave empty to display all cities.".format(max), min_value=1, max_value=max, value=None)
+        if number_temp is None or number_temp == max:
+            st.components.v1.html(bubble, width=1400, height=800, scrolling=True)
+        else:
+            st.plotly_chart(vis.bubble(number_temp))
+    elif page == "Specific City Information":
         country = location.data['Country'].unique()
         country.sort()
-        selected_country = st.selectbox("Select a country", ("All", *country))
+        selected_country = st.selectbox("Choose a country", ("All", *country))
         if selected_country != "All":
             city_list = location.data[location.data['Country'] == selected_country]['City_Country'].unique()
         else:
             city_list = location.data['City_Country'].unique()
-        st.header("City Information")
+        st.header("City-Specific Information")
         city_list.sort()
-        selected_city = st.selectbox("Select a City", city_list)
-        st.header(f"Data for city: {selected_city}")
-
-        city_map = Visualize(location.data)
-        st.plotly_chart(city_map.show_city(selected_city))
-
+        selected_city = st.selectbox("Choose a City", city_list)
+        st.subheader(f"Climate Data for {selected_city}")
+        st.plotly_chart(vis.show_city(selected_city))
+        st.subheader("Temperature Boxplot for the City")
+        st.text("This boxplot shows the distribution of temperatures for the selected city.")
+        boxplot = vis.boxplot(selected_city)
+        st.plotly_chart(boxplot)
+        st.subheader("Temperature Line Chart for the City")
+        st.text("This line chart shows the temperature trends for the selected city over the years.")
         fig_city = vis.line(selected_city)
         st.plotly_chart(fig_city)
-        st.write("Predicted Temperatures for the next 100 years")
+        st.subheader("Predicted Temperatures")
+        st.text("This line chart shows the predicted temperatures for the next 50 years.")
         predicted_temperatures = vis.predict_city_temperature(selected_city)
         st.plotly_chart(predicted_temperatures)
-        selected_year = st.selectbox("Select a year", vis.data_year[vis.data_year['City_Country']==selected_city]['Year'].unique())
-        st.header(f"Data for the city: {selected_city} and year: {selected_year}")
+        selected_year = st.selectbox("Choose a year", vis.data_year[vis.data_year['City_Country']==selected_city]['Year'].unique())
+        st.subheader(f"Climate Data for {selected_city} in {selected_year}")
+        st.text("This line chart shows the temperatures for the selected city during the months of the selected year.")
         fig_city_year = vis.line_year(selected_city,selected_year)
         st.plotly_chart(fig_city_year)
 
