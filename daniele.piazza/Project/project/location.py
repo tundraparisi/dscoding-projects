@@ -36,7 +36,7 @@ class Location:
     def get_coordinates(self):
         cities = self.data[['City', 'Country', 'Latitude', 'Longitude']].drop_duplicates().reset_index(drop=True)
         cities_coord = {}
-        for i in range(len(cities)):
+        for i in range(cities.shape[0]):
             city_name = cities.iloc[i]['City']
             city_country = cities.iloc[i]['Country']
             city_key = f"{city_name}, {city_country}"
