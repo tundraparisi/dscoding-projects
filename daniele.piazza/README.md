@@ -1,6 +1,6 @@
 # Weather Dataset Visualization
 
-This dataset captures temperature records worldwide dating back to 1750. The project's objective is to create a compelling graphical representation of the temperature changes over the years.
+This dataset captures temperature records worldwide dating back to 1750. The project's objective is to create a graphical representation of the temperature changes over the years.
 
   
 
