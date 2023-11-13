@@ -2,18 +2,15 @@ import streamlit as st
 from location import Location
 from visualize import Visualize
 import pandas as pd
- 
+import os
 #Change .streamlit/config.toml to change the theme color, the map will change accordingly
 
 update = False # Set to True if you want to update the coordinates of the cities in the csv files
-html = False  # Set to True if you want to create the html files for the complete bubble and range heatmaps
-
-api_key = pd.read_csv("/Users/dani/Desktop/api_key.txt",header=None)[0][0]
-all_path = "Data/GlobalLandTemperaturesByCity.csv"
-major_path = "Data/GlobalLandTemperaturesByMajorCity.csv"
 
 st.set_page_config(layout="wide")
-
+api_key = pd.read_csv("/Users/dani/Desktop/api_key.txt",header=None)[0][0] #change with your google api key
+all_path = "Data/GlobalLandTemperaturesByCity.csv"
+major_path = "Data/GlobalLandTemperaturesByMajorCity.csv"
 
 @st.cache_data
 def load_location(path, api_key):
@@ -27,24 +24,24 @@ def load_map_data(location_data):
     vis = Visualize(location_data)
     return vis
 
-def create_html(major,all):
+location_major = load_location(major_path, api_key)
+location_all = load_location(all_path, api_key)
+major = load_map_data(location_major.data)
+all = load_map_data(location_all.data)
+
+def create_html():
     major.bubble().write_html("bubble_major.html")
     major.bubble_range().write_html("range_major.html")
     all.bubble().write_html("bubble_all.html")
     all.bubble_range().write_html("range_all.html")
 
-location_major = load_location(major_path, api_key)
-location_all = load_location(all_path, api_key)
-major_map = load_map_data(location_major.data)
-all_map = load_map_data(location_all.data)
-
-if html:
-    create_html(major_map,all_map)
-
+@st.cache_data
 def load_html(path):
+    if not os.path.exists(path):
+        create_html()
     with open(path, 'r') as f:
         return f.read()
-
+    
 def main():
     page = st.selectbox("Choose a page", ("General Climate Data", "Specific City Information"))
     st.title("Global Climate Data Analysis")
@@ -52,13 +49,13 @@ def main():
     if dataset == "Major cities":
         location = location_major
         st.write("This dataset includes climate data from major cities around the world.")
-        vis = major_map
+        vis = major
         bubble = load_html("bubble_major.html")
         range = load_html("range_major.html")
     else:
         location = location_all
         st.write("This dataset includes climate data from all cities around the world.")
-        vis = all_map
+        vis = all
         bubble = load_html("bubble_all.html")
         range = load_html("range_all.html")
     if page == "General Climate Data":
@@ -103,7 +100,7 @@ def main():
         fig_city = vis.line(selected_city)
         st.plotly_chart(fig_city)
         st.subheader("Predicted Temperatures")
-        st.text("This line chart shows the predicted temperatures for the next 100 years.")
+        st.text("This line chart shows the predicted temperatures for the next 50 years.")
         predicted_temperatures = vis.predict_city_temperature(selected_city)
         st.plotly_chart(predicted_temperatures)
         selected_year = st.selectbox("Choose a year", vis.data_year[vis.data_year['City_Country']==selected_city]['Year'].unique())

@@ -7,6 +7,7 @@ from sklearn.preprocessing import PolynomialFeatures
 import numpy as np
 import plotly.graph_objects as go
 from sklearn.preprocessing import MinMaxScaler
+import toml 
 
 class Visualize:
     def __init__(self, data):
@@ -38,17 +39,12 @@ class Visualize:
         self.data_year.drop(columns=['AvailableMonths'], inplace=True)
 
     def get_theme(self):
-        with open('.streamlit/config.toml') as f:
-            for line in f:
-                if line.startswith('primaryColor'):
-                    self.primaryColor = line.split('=')[1].strip().strip('\"')
-                if line.startswith('backgroundColor'):
-                    self.backgroundColor = line.split('=')[1].strip().strip('\"')
-                if line.startswith('secondaryBackgroundColor'):
-                    self.secondaryBackgroundColor = line.split('=')[1].strip().strip('\"')
-                if line.startswith('textColor'):
-                    self.textColor = line.split('=')[1].strip().strip('\"')
-
+        config = toml.load('.streamlit/config.toml')
+        self.primaryColor = config['theme']['primaryColor']
+        self.backgroundColor = config['theme']['backgroundColor']
+        self.secondaryBackgroundColor = config['theme']['secondaryBackgroundColor']
+        self.textColor = config['theme']['textColor']
+        
     def fig_layout(self,fig):
         fig.update_layout({'paper_bgcolor': self.backgroundColor},
                           width=1300,
@@ -165,7 +161,7 @@ class Visualize:
     
     def bubble_range(self, n=None):
         df = self.data_year.copy()
-        df["Range"] = df['MaxTemp'] - df['MinTemp']
+        df["Range"] = (df['MaxTemp'] - df['MinTemp']).round(2)
         scaler = MinMaxScaler()
         df["Size"] =  scaler.fit_transform(df[['Range']])
         if n is not None:
@@ -234,7 +230,8 @@ class Visualize:
         years_poly = poly_reg.fit_transform(years)
         lin_reg_poly = LinearRegression()
         lin_reg_poly.fit(years_poly, temperatures)
-        future_years = np.arange(years.max(), years.max()+70).reshape(-1, 1)
+        range = np.arange(years.max(), years.max()+50)
+        future_years = range.reshape(-1, 1)
         future_years_poly = poly_reg.transform(future_years)
         predicted_temperatures = lin_reg_poly.predict(poly_reg.transform(years))
         future_predicted_temperatures = lin_reg_poly.predict(future_years_poly)
@@ -249,7 +246,7 @@ class Visualize:
                         line=dict(color='blue'),
                         name='Polynomial Regression'
                         )
-        fig.add_scatter(x=np.arange(years.max(), years.max()+70),
+        fig.add_scatter(x=range,
                         y=future_predicted_temperatures,
                         mode='lines', 
                         line=dict(color='red'),
@@ -261,9 +258,9 @@ class Visualize:
     def additional_statistics(self):
         city_stats = self.data_year.groupby('City_Country').agg(
             AverageTemperature=('YearlyAverage', 'mean'),
-            MinTemp=('YearlyAverage', 'min'),
-            MaxTemp=('YearlyAverage', 'max'),
-            Std=('AverageTemperatureUncertainty','mean')).round(2)
+            MinTemperature=('YearlyAverage', 'min'),
+            MaxTemperature=('YearlyAverage', 'max'),
+            Uncertainty=('AverageTemperatureUncertainty','mean')).round(2)
         return city_stats
     
     def boxplot(self,city_country):
@@ -277,7 +274,7 @@ class Visualize:
         for month in range(1, 13):
             month_data = df[df['Month'] == month]
             month_temperatures = month_data['AverageTemperature']
-            jittered_values = np.random.normal(month, 0.1, len(month_temperatures)) 
+            position = np.random.normal(month, 0.1, len(month_temperatures)) 
             month_name = month_data['Month_Name'].iloc[0]
             fig.add_box(x=month_data['Month'], 
                         y=month_temperatures, 
@@ -286,7 +283,7 @@ class Visualize:
                         hovertemplate='Temperature: %{y}<br>Year: %{text}', 
                         text=month_data['Year']
                         )
-            fig.add_scatter(x=jittered_values, 
+            fig.add_scatter(x=position, 
                             y=month_temperatures, 
                             mode='markers', 
                             name=month_name, 
