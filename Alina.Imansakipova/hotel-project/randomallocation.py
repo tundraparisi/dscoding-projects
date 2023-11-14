@@ -26,11 +26,11 @@ def allocate_random_hotel(guest_id, guest_row, hotelsdata, preferences):
 
     return [guest_id, random_available_hotel_id, satisfaction, paid_price]
 
-def get_random_allocation(hotelsdata, guestsdata, preferencesdata):
+def get_random_allocation(hotelsdata, guestdata, preferencesdata):
     allocation = pd.DataFrame(columns=['guest_id', 'hotel_id', 'satisfaction_percentage', 'paid_price'])
 
     # randomizing guests
-    shuffled_guests = guestsdata.sample(frac=1, random_state=42)
+    shuffled_guests = guestdata.sample(frac=1, random_state=42)
     # we're taking every guest_id AND every pair guest_id|discount
     for guest_id, guest_row in shuffled_guests.iterrows():
         allocation_entry = allocate_random_hotel(guest_id, guest_row, hotelsdata, preferencesdata)
@@ -38,3 +38,6 @@ def get_random_allocation(hotelsdata, guestsdata, preferencesdata):
             allocation.loc[len(allocation)] = allocation_entry
 
     return allocation
+
+print('Start calculate random allocation')
+random_allocation = get_random_allocation(hotelsdata.copy(), guestdata, preferencesdata)
