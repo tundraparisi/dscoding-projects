@@ -6,8 +6,8 @@ hotelsdata = pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/pyt
 guestdata = pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/python-project/hotels/guests.xlsx").set_index('guest')
 preferencesdata=pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/python-project/hotels/preferences.xlsx").set_index(['guest','hotel'])
 from satisfactionpercentage import calculate_satisfaction_percentage
-
-def allocate_random_hotel(guest_id, guest_row, hotelsdata, preferences):
+from vizualization import visualize_allocation
+def allocate_random_hotel(guest_id, guest_row, hotelsdata, preferencesdata):
     available_hotels = hotelsdata[hotelsdata['rooms'] > 0]
     if available_hotels.empty:
         return None
@@ -22,7 +22,7 @@ def allocate_random_hotel(guest_id, guest_row, hotelsdata, preferences):
     paid_price_coefficient = 1 - guest_row['discount']
     paid_price = random_available_hotel_row['price'] * paid_price_coefficient
 
-    satisfaction = calculate_satisfaction_percentage(guest_id, random_available_hotel_id, preferences)
+    satisfaction = calculate_satisfaction_percentage(guest_id, random_available_hotel_id, preferencesdata)
 
     return [guest_id, random_available_hotel_id, satisfaction, paid_price]
 
@@ -41,3 +41,4 @@ def get_random_allocation(hotelsdata, guestdata, preferencesdata):
 
 print('Start calculate random allocation')
 random_allocation = get_random_allocation(hotelsdata.copy(), guestdata, preferencesdata)
+visualize_allocation(random_allocation.head(20))

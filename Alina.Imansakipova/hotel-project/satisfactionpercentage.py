@@ -5,7 +5,7 @@ guestdata = pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/pyth
 preferencesdata=pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/python-project/hotels/preferences.xlsx").set_index(['guest','hotel'])
 
 def calculate_satisfaction_percentage(guest_id, hotel_id, preferencesdata):
-    guest_preferences = preferencesdata[preferencesdata['guest'] == guest_id].reset_index()
+    guest_preferences = preferencesdata[preferencesdata.index['guest'] == guest_id].reset_index()
 
 
     if guest_preferences.empty:
