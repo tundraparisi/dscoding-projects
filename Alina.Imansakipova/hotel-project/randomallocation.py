@@ -38,4 +38,3 @@ def get_random_allocation(hotelsdata, guestsdata, preferencesdata):
             allocation.loc[len(allocation)] = allocation_entry
 
     return allocation
-
