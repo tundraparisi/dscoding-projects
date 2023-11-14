@@ -29,7 +29,7 @@ def allocate_random_hotel(guest_id, guest_row, hotelsdata, preferences):
 def get_random_allocation(hotelsdata, guestsdata, preferencesdata):
     allocation = pd.DataFrame(columns=['guest_id', 'hotel_id', 'satisfaction_percentage', 'paid_price'])
 
-    # randomizing guests, why these parameters? пишем чтобы было одно и тоже состояние
+    # randomizing guests
     shuffled_guests = guestsdata.sample(frac=1, random_state=42)
     # we're taking every guest_id AND every pair guest_id|discount
     for guest_id, guest_row in shuffled_guests.iterrows():
