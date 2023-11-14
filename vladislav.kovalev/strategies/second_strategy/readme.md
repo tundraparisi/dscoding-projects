@@ -1,1 +1,0 @@
-CUSTOMER PREFERENCE: customers are served in order of reservation (the customer number indicates the order) and are allocated to the hotel based on their preference, until the seats or customers are exhausted;

@@ -1,1 +1,0 @@
- PRICE: the places in the hotel are distributed in order of price, starting with the cheapest hotel and following in order of reservation and preference until the places or customers are exhausted; 
