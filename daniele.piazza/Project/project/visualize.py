@@ -1,5 +1,4 @@
 import pandas as pd
-# install nbformat
 import plotly.express as px
 import pandas as pd
 import numpy as np
@@ -8,6 +7,7 @@ from sklearn.preprocessing import PolynomialFeatures
 import numpy as np
 import plotly.graph_objects as go
 from sklearn.preprocessing import MinMaxScaler
+import toml 
 
 class Visualize:
     def __init__(self, data):
@@ -15,14 +15,21 @@ class Visualize:
         self.data['dt'] = pd.to_datetime(self.data['dt'])
         self.data['Year'] = self.data['dt'].dt.year
         self.data.dropna(subset=['AverageTemperature'], inplace=True)
+        self.data = self.data.sort_values(by='dt')
         self.data_year = self.data.groupby(['City_Country', 'Year', 'Latitude', 'Longitude']).agg(
             YearlyAverage=('AverageTemperature', 'mean'),
             AvailableMonths=('AverageTemperature', 'count'),
-            MinTemp= ('AverageTemperature', 'min'),
-            MaxTemp = ('AverageTemperature', 'max')).reset_index()
+            MinTemp=('AverageTemperature', 'min'),
+            MaxTemp=('AverageTemperature', 'max')).reset_index()
         self.data_year['YearlyAverage'] = self.data_year['YearlyAverage'].round(2)
         self.clean_data()
- 
+        self.calculate_annual_uncertainty()
+        self.get_theme() 
+
+    def calculate_annual_uncertainty(self):
+        annual_uncertainty = self.data.groupby(["Year", 'City_Country'])['AverageTemperatureUncertainty'].apply(lambda x: (x ** 2).sum() ** 0.5)
+        self.data_year = pd.merge(self.data_year, annual_uncertainty.reset_index(name='AverageTemperatureUncertainty'), on=['Year', 'City_Country'])
+
     def clean_data(self):
         self.data.sort_values(by='dt', inplace=True)
         complete_years = self.data_year[self.data_year['AvailableMonths'] == 12][['City_Country', 'Year']]
@@ -31,8 +38,22 @@ class Visualize:
         self.data_year.sort_values(by='Year', inplace=True)
         self.data_year.drop(columns=['AvailableMonths'], inplace=True)
 
+    def get_theme(self):
+        config = toml.load('.streamlit/config.toml')
+        self.primaryColor = config['theme']['primaryColor']
+        self.backgroundColor = config['theme']['backgroundColor']
+        self.secondaryBackgroundColor = config['theme']['secondaryBackgroundColor']
+        self.textColor = config['theme']['textColor']
+
     def fig_layout(self,fig):
-        fig.update_layout(width=1300,height=700,margin={"r":0,"t":0,"l":0,"b":0})
+        fig.update_layout({'paper_bgcolor': self.backgroundColor},
+                          width=1300,
+                          height=800,
+                          margin={"r":0,"t":0,"l":0,"b":0},
+                          font=dict(color=self.primaryColor),
+                          updatemenus=[dict(bgcolor=self.secondaryBackgroundColor)]
+                          )
+        fig.update_mapboxes(bounds_east=180, bounds_west=-180, bounds_north=90, bounds_south=-70)
         return fig
     
     def show_locations(self):
@@ -40,7 +61,7 @@ class Visualize:
         fig = px.scatter_mapbox(city,
                     lat='Latitude',
                     lon='Longitude',
-                    hover_name="City",mapbox_style="carto-positron",zoom=1)
+                    hover_name="City",mapbox_style="open-street-map",zoom=1)
         fig.update_geos(
             visible=True, resolution=50,
             showcountries=True, countrycolor="RebeccaPurple"
@@ -48,14 +69,22 @@ class Visualize:
         return self.fig_layout(fig,'General Map')
     
     def show_city(self, city_country):
-        filtered_data = self.data[self.data['City_Country'] == city_country].groupby(['City', 'Country', 'Latitude', 'Longitude']).first().reset_index()
+        filtered_data = self.data[self.data['City_Country'] == city_country].groupby(['City_Country', 'Latitude', 'Longitude']).first().reset_index()
+        filtered_data['Size'] = [20]
         fig = px.scatter_mapbox(filtered_data,
                                 lat='Latitude',
                                 lon='Longitude',
-                                hover_name="City",
-                                mapbox_style="carto-positron",
+                                hover_name="City_Country",
+                                mapbox_style="open-street-map",
                                 zoom=7,
-                                center={"lat": filtered_data['Latitude'].iloc[0], "lon": filtered_data['Longitude'].iloc[0]},size=[10],size_max=10)
+                                center={"lat": filtered_data['Latitude'].iloc[0], "lon": filtered_data['Longitude'].iloc[0]},
+                                size="Size",
+                                hover_data={
+                                    "City_Country": False,
+                                    "Latitude": False,
+                                    "Longitude": False,
+                                    "Size": False
+                                })
         fig.update_geos(
             visible=True,
             resolution=50,
@@ -66,9 +95,19 @@ class Visualize:
     
 
     def heatmap(self):
-        fig = px.density_mapbox(self.data_year, lat='Latitude', lon='Longitude', z='YearlyAverage', radius=5,
-                                center=dict(lat=0, lon=0),range_color=[], zoom=0.4, animation_frame = 'Year',hover_name="City_Country",
-                                mapbox_style="open-street-map", animation_group="City_Country",color_continuous_scale=px.colors.diverging.Portland,opacity=0.8,template='plotly_dark',
+        fig = px.density_mapbox(self.data_year,
+                                lat='Latitude',
+                                lon='Longitude',
+                                z='YearlyAverage',
+                                radius=5,
+                                center=dict(lat=0, lon=0),
+                                range_color=[],
+                                zoom=0.4,
+                                animation_frame = 'Year',
+                                hover_name="City_Country",
+                                mapbox_style="open-street-map", 
+                                animation_group="City_Country",
+                                color_continuous_scale=px.colors.diverging.Portland,opacity=0.8,template='plotly_dark',
                                 hover_data={
                                     "YearlyAverage": True,
                                     "City_Country": False,
@@ -78,29 +117,64 @@ class Visualize:
                                 })
         return self.fig_layout(fig)
 
-
-    def line(self,city_country):
-        city_data = self.data_year[(self.data_year['City_Country'] == city_country)]
-        fig = px.line(city_data, x='Year', y='YearlyAverage', markers=True)
-        return self.fig_layout(fig)
-
     def line_year(self,city_country,year):
         city_data = self.data[(self.data['City_Country'] == city_country) & (self.data['Year'] == year)]
-        fig = px.line(city_data, x='dt', y='AverageTemperature', markers=True)
+        fig = px.line(city_data, x='dt', y='AverageTemperature', markers=True, color_discrete_sequence=[self.primaryColor])
         return self.fig_layout(fig)
 
+    def line(self, city_country):
+        city_data = self.data_year[(self.data_year['City_Country'] == city_country)]
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=city_data['Year'],
+            y=city_data['YearlyAverage'] - city_data['AverageTemperatureUncertainty'],
+            marker=dict(color=self.primaryColor),
+            line=dict(width=0),
+            mode='lines',
+            showlegend=False,
+            name='Lower bound'
+        ))
+        fig.add_trace(go.Scatter(
+            x=city_data['Year'],
+            y=city_data['YearlyAverage'] + city_data['AverageTemperatureUncertainty'],
+            mode='lines',
+            marker=dict(color=self.primaryColor),
+            line=dict(width=0),
+            fill='tonexty',
+            fillcolor=self.secondaryBackgroundColor,
+            showlegend=False,
+            name='Upper bound'
+        ))
+        fig.add_trace(go.Scatter(
+            x=city_data['Year'],
+            y=city_data['YearlyAverage'],
+            mode='lines',
+            name='Average Temperature',
+            line=dict(color=self.primaryColor)
+        ))
+        return self.fig_layout(fig)
+        
     def bubble_range(self, n=None):
         df = self.data_year.copy()
-        df["Range"] = df['MaxTemp'] - df['MinTemp']
+        df["Range"] = (df['MaxTemp'] - df['MinTemp']).round(2)
         scaler = MinMaxScaler()
         df["Size"] =  scaler.fit_transform(df[['Range']])
         if n is not None:
             df = df.groupby('Year').apply(lambda x: x.nlargest(n, 'Range')).reset_index(drop=True)
         min = df['Range'].min()
         max = df['Range'].max()
-        fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude', color="Range", size="Size",
-                                color_continuous_scale=px.colors.diverging.Portland, zoom=1, animation_frame='Year',
-                                hover_name="City_Country", mapbox_style="open-street-map", range_color=(min, max),template='plotly_dark',
+        fig = px.scatter_mapbox(df,
+                                lat='Latitude',
+                                lon='Longitude',
+                                color="Range",
+                                size="Size",
+                                color_continuous_scale=px.colors.diverging.Portland,
+                                zoom=1,
+                                animation_frame='Year',
+                                hover_name="City_Country",
+                                mapbox_style="open-street-map", 
+                                range_color=(min, max),
+                                template='plotly_dark',
                                 hover_data={
                                     "Range": True,
                                     "City_Country": False,
@@ -110,6 +184,7 @@ class Visualize:
                                     "YearlyAverage": False,
                                     "Size": False
                                 })
+        fig.update_mapboxes(bounds_east=180, bounds_west=-180, bounds_north=90, bounds_south=-70)
         return self.fig_layout(fig)
 
     def bubble(self,n=None):
@@ -150,23 +225,37 @@ class Visualize:
         years_poly = poly_reg.fit_transform(years)
         lin_reg_poly = LinearRegression()
         lin_reg_poly.fit(years_poly, temperatures)
-        future_years = np.arange(2012, 2100).reshape(-1, 1)
+        range = np.arange(years.max(), years.max()+50)
+        future_years = range.reshape(-1, 1)
         future_years_poly = poly_reg.transform(future_years)
         predicted_temperatures = lin_reg_poly.predict(poly_reg.transform(years))
         future_predicted_temperatures = lin_reg_poly.predict(future_years_poly)
-
-        fig = px.scatter(x=years.flatten(), y=temperatures, color_discrete_sequence=['green'], labels={'x': 'Year', 'y': 'Temperature'})
-        fig.add_scatter(x=years.flatten(), y=predicted_temperatures, mode='lines', line=dict(color='blue'), name='Polynomial Regression')
-        fig.add_scatter(x=np.arange(2012, 2100), y=future_predicted_temperatures, mode='lines', line=dict(color='red'), name='Future Prediction')
+        fig = px.scatter(x=years.flatten(),
+                         y=temperatures,
+                         color_discrete_sequence=[self.secondaryBackgroundColor],
+                         labels={'x': 'Year', 'y': 'Temperature'}
+                         )
+        fig.add_scatter(x=years.flatten(),
+                        y=predicted_temperatures,
+                        mode='lines',
+                        line=dict(color=self.primaryColor),
+                        name='Polynomial Regression'
+                        )
+        fig.add_scatter(x=range,
+                        y=future_predicted_temperatures,
+                        mode='lines', 
+                        line=dict(color='red'),
+                        name='Future Prediction'
+                        )
         fig.update_layout(xaxis_title='Year', yaxis_title='Temperature')
         return self.fig_layout(fig)
     
     def additional_statistics(self):
         city_stats = self.data_year.groupby('City_Country').agg(
             AverageTemperature=('YearlyAverage', 'mean'),
-            MinTemp=('YearlyAverage', 'min'),
-            MaxTemp=('YearlyAverage', 'max'),
-            Std=('YearlyAverage','std')).reset_index().round(2)
+            MinTemperature=('YearlyAverage', 'min'),
+            MaxTemperature=('YearlyAverage', 'max'),
+            Uncertainty=('AverageTemperatureUncertainty','mean')).round(2)
         return city_stats
     
     def boxplot(self,city_country):
@@ -175,19 +264,33 @@ class Visualize:
         df['Year'] = df['dt'].dt.year  
         df['Month_Name'] = df['dt'].dt.strftime('%B')  
         colors = px.colors.qualitative.Dark24
-        month_labels = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'}
         fig = go.Figure()
+        df.sort_values(by='Month', inplace=True)
         for month in range(1, 13):
             month_data = df[df['Month'] == month]
             month_temperatures = month_data['AverageTemperature']
-            jittered_values = np.random.normal(month, 0.1, len(month_temperatures)) 
-            fig.add_box(x=month_data['Month'], y=month_temperatures, name=month_labels[month], marker_color=colors[month-1], 
-                        hovertemplate='Temperature: %{y}<br>Year: %{text}', text=month_data['Year'])
-            fig.add_scatter(x=jittered_values, y=month_temperatures, mode='markers', name=month_labels[month], 
-                            marker=dict(color=colors[month-1], size=5, opacity=0.1), showlegend=False,
+            position = np.random.normal(month, 0.1, len(month_temperatures)) 
+            month_name = month_data['Month_Name'].iloc[0]
+            fig.add_box(x=month_data['Month'], 
+                        y=month_temperatures, 
+                        name=month_name, 
+                        marker_color=colors[month-1], 
+                        hovertemplate='Temperature: %{y}<br>Year: %{text}', 
+                        text=month_data['Year']
+                        )
+            fig.add_scatter(x=position, 
+                            y=month_temperatures, 
+                            mode='markers', 
+                            name=month_name, 
+                            marker=dict(color=colors[month-1], size=5, opacity=0.3),
+                            showlegend=False,
                             hovertemplate='Temperature: %{y}<br>Year: %{text}', 
-                            text=month_data['Year'])  
-        fig.update_layout(xaxis={'tickmode': 'array', 'tickvals': list(month_labels.keys()), 'ticktext': list(month_labels.values())})
+                            text=month_data['Year']
+                            )  
+        fig.update_layout(xaxis={'tickmode': 'array',
+                                 'tickvals':df['Month'].unique(),
+                                 'ticktext': df['Month_Name'].unique()})
         fig.update_traces(line=dict(width=2))
         return self.fig_layout(fig)
+
     

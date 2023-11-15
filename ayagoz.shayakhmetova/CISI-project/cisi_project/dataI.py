@@ -1,4 +1,5 @@
 import pandas as pd
+import re 
 
 class CISIData:
 
@@ -29,3 +30,20 @@ class CISIData:
     #panda's tail method to show last 5 rows
     def get_tail(self, rows = 5):
          return self.dataset.tail(rows)
+    
+    #delete all ", id, name and othe non-word characters
+    def clean_column(self, column_name):
+        if column_name in self.dataset.columns:
+            self.dataset[column_name] = self.dataset[column_name].apply(lambda x: re.sub(r'\W', '', str(x)))
+            self.dataset[column_name] = self.dataset[column_name].apply(lambda x: re.sub(r'\d', '', str(x)))
+            self.dataset[column_name] = self.dataset[column_name].apply(lambda x: x.replace('name', ' '))
+            self.dataset[column_name] = self.dataset[column_name].apply(lambda x: x.replace('id', ''))
+    
+    #delete specidied column
+    def drop_column(self, column_name):
+        self.dataset = self.dataset.drop(column_name, axis = 1)
+    
+    #save modified dataset to new csv file
+    def new_csv(self, file_path):
+         self.dataset.to_csv(file_path, index = False)
+

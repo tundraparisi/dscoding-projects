@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 class MovieQuiz:
-    def __init__(self, movie_data, num_questions=5):
+    def __init__(self, movie_data, num_questions=2):
         self.movie_data = movie_data
         self.num_questions = num_questions
         self.total_points = 0 
@@ -107,9 +107,9 @@ class MovieQuiz:
         return self.total_points
 
 if __name__ == "__main__":
-    movies_df = pd.read_csv("/Users/apple/Documents/GitHub/dscoding-projects/ayagoz.shayakhmetova/CISI-project/cisi_project/tmdb_5000_movies.csv")
+    movies_df = pd.read_csv("/Users/apple/Documents/GitHub/dscoding-projects/ayagoz.shayakhmetova/CISI-project/cisi_project/new_movies.csv")
 
-    quiz = MovieQuiz(movies_df, num_questions=5)
+    quiz = MovieQuiz(movies_df, num_questions=2)
     quiz.start_quiz()
     total_points = quiz.get_total_points()
     print(f"Total points: {total_points}")
