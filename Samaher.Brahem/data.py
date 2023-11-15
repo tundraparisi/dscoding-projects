@@ -30,7 +30,7 @@ class DataManager:
 
     def get_prod(self):
         query = "SELECT movie.official_title, produced.country, movie.year, rating.votes FROM imdb.produced LEFT JOIN imdb.movie ON produced.movie = movie.id LEFT JOIN imdb.rating ON produced.movie = rating.movie WHERE rating.votes >0 AND movie.year IS NOT NULL;"
-        return pd.DataFrame(self.execute_query(query), columns=['official_title', 'country'])
+        return pd.DataFrame(self.execute_query(query), columns=['official_title', 'country', 'year','votes'])
 
     def get_rating(self):
         query = "SELECT movie.official_title, movie.year, rating.votes, rating.score, rating.scale FROM imdb.movie LEFT JOIN imdb.rating ON movie.id = rating.movie WHERE rating.votes >0;"
