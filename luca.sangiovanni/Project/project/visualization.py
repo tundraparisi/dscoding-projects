@@ -23,16 +23,18 @@ class CityCountry:
                                                                                                       False)
 
     def byCountry_List(self):
-        return CityCountry.numCities.head(15)
+        count_cities = CityCountry.numCities.copy()
+        count_cities.columns = ["Number of cities"]
+        return count_cities.head(15)
 
     def byCountry_Plot(self):
+        plt.figure(figsize=(12,5))
         plt.bar(CityCountry.numCities.index[:15], CityCountry.numCities.City[:15], color="brown")
         plt.xticks(rotation=70)
         plt.ylabel("Number of cities in the dataset\n")
         plt.title("Number of cities in the dataset, by country\n")
 
-    def byCountry_Map(self):
-        nation = np.random.choice(cities.Country.unique())
+    def byCountry_Map(self, nation):
         byCountry = cities[cities.Country == nation]
         number = str(byCountry["City"].count())
         if number == "1":
@@ -64,7 +66,7 @@ class Temperatures:
         temp = tempByCity[tempByCity["City"] == city_name]
         tempJan = temp[temp["dt"].str.contains("5-01-01")]
         tempAug = temp[temp["dt"].str.contains("5-08-01")]
-        fig, (ax1, ax2) = plt.subplots(2, 1)
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(17, 8))
         fig.suptitle("Temperatures in " + city_name + " during the years\n")
         ax1.plot(tempJan["dt"], tempJan["AverageTemperature"], color="b")
         ax2.plot(tempAug["dt"], tempAug["AverageTemperature"], color="r")
@@ -80,7 +82,7 @@ class Temperatures:
         temp = tempByCity[tempByCity["City"] == city_name]
         t1900 = temp[temp["dt"].str.contains("1900")]
         t2012 = temp[temp["dt"].str.contains("2012")]
-        fig = plt.figure()
+        fig = plt.figure(figsize=(15, 6))
         ax1 = fig.add_subplot(111, label="1")
         ax2 = fig.add_subplot(111, label="2",
                               frame_on=False)  # I don't want the plot rectangle to be shown, otherwise it would overlap with the other rectangle
@@ -107,8 +109,7 @@ class Temperatures:
         fig.update_layout(title_text=titleText, title_x=0.47)
         fig.show()
 
-    def countryStats(self):
-        nation = np.random.choice(cities.Country.unique())
+    def countryStats(self, nation):
         byNation = tempByCity[tempByCity.Country == nation]
         first = str(byNation.dt.iloc[0])
         latest = str(byNation.dt.iloc[-1])
@@ -124,7 +125,7 @@ class Temperatures:
             country_population = format(CountryInfo(random_country).population(), ",d")
             country_region = CountryInfo(random_country).region()
             country_subregion = CountryInfo(random_country).subregion()
-            print(("Here is some stats about " + nation + "\n").upper())
+            print(("\nHere is some stats about " + nation + "\n").upper())
             print("-"*80)
             print("\nWEATHER STATS:\n")
             print("First recorded temperature: " + months[first[-5:-3]] + " " + first[:4])
@@ -143,7 +144,7 @@ class Temperatures:
             print("Please choose another country")
 
     def tempShock(self):
-        random_year = str(np.random.randint(1800, 2013))
+        random_year = str(np.random.randint(1830, 2013))
         tempYear = tempByCity[tempByCity["dt"].str.contains(random_year)].drop(
             ["Latitude", "Longitude", "AverageTemperatureUncertainty"], axis=1)
         minTemp = tempYear.groupby("City").min("AverageTemperature")
@@ -153,9 +154,30 @@ class Temperatures:
         temp1 = pd.concat([minTemp, maxTemp], axis=1, join="inner")
         temp1["TempDifference"] = temp1["MaximumTemperature"] - temp1["MinimumTemperature"]
         tempDiff = temp1.sort_values(by="TempDifference", ascending=False)
-        fig = tempDiff["TempDifference"][:10].plot(kind="barh")
+        plt.figure(figsize=(15,6))
+        fig = tempDiff["TempDifference"][:10].plot(kind="barh", color="SaddleBrown")
         fig.set_xlim(left=40)
         plt.title(
-            "Cities with the biggest difference between highest and lowest temperature registered in " + random_year + "\n")
+            "Cities with the biggest difference between highest and lowest temperature in " + random_year + "\n")
         plt.xlabel("\nTemperature shock (°C)")
+        plt.show()
+
+    def shockByYear(self):
+        temp = tempByCity.drop(["AverageTemperatureUncertainty", "Latitude", "Longitude"], axis=1)
+        temp["year"] = temp["dt"].str.slice(0, 4)
+        max = temp.groupby(["City", "year"]).max("AverageTemperature")
+        max.rename(columns={"AverageTemperature": "MaximumTemperature"}, inplace=True)
+        min = temp.groupby(["City", "year"]).min("AverageTemperature")
+        min.rename(columns={"AverageTemperature": "MinimumTemperature"}, inplace=True)
+        temp_minmax = pd.concat([min, max], axis=1, join="inner").reset_index()
+        temp_minmax["TempDifference"] = temp_minmax["MaximumTemperature"] - temp_minmax["MinimumTemperature"]
+        temp_withDiff = temp_minmax.sort_values(by=["year", "TempDifference"], ascending=(True, False))
+        temp49 = temp_withDiff[temp_withDiff["TempDifference"] > 49].value_counts().reset_index().rename(
+            columns={"count": "TimesAbove49"}).sort_values(by="year")
+        temp_counted = temp49["year"].value_counts().sort_values(ascending=False).reset_index()
+        temp_shock = temp_counted.sort_values(by="year")
+        plt.figure(figsize=(20,6))
+        plt.plot(temp_shock["year"], temp_shock["count"], color="mediumseagreen")
+        plt.xticks(temp_shock["year"][0::10], rotation=35)
+        plt.title("Number of cities with a yearly temperature shock greater than 49°C, by year\n")
         plt.show()

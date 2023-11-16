@@ -36,16 +36,16 @@ class Location:
     def get_coordinates(self):
         cities = self.data[['City', 'Country', 'Latitude', 'Longitude']].drop_duplicates().reset_index(drop=True)
         cities_coord = {}
-        for i in range(len(cities)):
-            city_name = cities.iloc[i]['City']
-            city_country = cities.iloc[i]['Country']
-            city_key = f"{city_name}, {city_country}"
-            if city_key not in cities_coord:
+        for i in range(cities.shape[0]):
+            city = cities.iloc[i]['City']
+            country = cities.iloc[i]['Country']
+            city_country = f"{city}, {country}"
+            if city_country not in cities_coord:
                 coord = self._google_coords(cities.iloc[i])
                 if coord is not None:
-                    cities_coord[city_key] = coord
+                    cities_coord[city_country] = coord
                 else:
-                    cities_coord[city_key] = self._coordinates(cities.iloc[i])
+                    cities_coord[city_country] = self._coordinates(cities.iloc[i])
         return cities_coord
 
     def update_file(self):
