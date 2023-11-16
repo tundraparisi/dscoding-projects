@@ -1,5 +1,5 @@
 from data_manager import DataManager
-from quiz import quiz_game
+from quiz import Quiz
 
 imdb_data = DataManager(
     dbname='imdb',
@@ -12,7 +12,6 @@ imdb_data = DataManager(
 # Get the movie data from the database
 movie_data = imdb_data.get_movie()
 
-# Execute the quiz game using movie_data
-quiz_game(movie_data)
 
 imdb_data.close_connection()
+
