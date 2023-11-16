@@ -1,32 +1,28 @@
-"""
-This class is used to visualize the data. It contains methods to create the following visualizations:
-- General Map (show_location): a map with all the cities in the dataset
-- Specific City Information (show_city): a map with the city of choice
-- Heatmap (heatmap): a heatmap with the average temperature of each city for each year
-- Line Chart Year (line_year): a line chart with the average temperature of a selected city in each month
-- Line Chart (line): a line chart with the average temperature of a selected city in each year
-- Temperature Range Heatmap (bubble_range): a heatmap with the range of temperatures for each city
-- Average Temperature Heatmap (bubble): a heatmap with the average temperature for each city
-- Predicted Temperatures (predict_city_temperature): a line chart with the predicted temperatures for the next 50 years
-- Additional Statistics (additional_statistics): a dataframe with additional statistics about the dataset
-- Temperature Boxplot (boxplot): a boxplot and scatterplot with the distribution of temperatures for a selected city during each mont
-"""
 import pandas as pd
 import plotly.express as px
-import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
-import numpy as np
 import plotly.graph_objects as go
 from sklearn.preprocessing import MinMaxScaler
 import toml 
 import pycountry_convert as pc
+from abc import abstractmethod
 
-
+"""
+This class is used to visualize the data. It contains methods to create the following visualizations:
+- Heatmap (heatmap): a heatmap with the average temperature of each city/country for each year
+- Line Chart Year (line_year): a line chart with the average temperature of a selected city/country in each month
+- Line Chart (line): a line chart with the average temperature of a selected city/country in each year
+- Temperature Range Heatmap (bubble_range): a heatmap with the range of temperatures for each city/country for each year
+- Average Temperature Heatmap (bubble): a heatmap with the average temperature for each city/country for each year
+- Predicted Temperatures (predict_city_temperature): a line chart with the predicted temperatures for the next 50 years for a selected city/country
+- Additional Statistics (additional_statistics): a dataframe with additional statistics about the dataset
+- Temperature Boxplot (boxplot): a boxplot and scatterplot with the distribution of temperatures for a selected city/country during each month
+"""
 class Visualize:
     """
-    Initialize the class with the data and calculate the yearly average temperature for each city.
+    Initialize the class with the data and calculate the yearly average temperature.
 
     Parameters
     ----------
@@ -50,7 +46,7 @@ class Visualize:
     """
     def __init__(self,label,group):
         self.label = label
-        self.data.dropna(subset=[label], inplace=True)
+        self.data.dropna(subset=[self.label], inplace=True)
         self.data.dropna(subset=['AverageTemperature'], inplace=True)
         self.data['Year'] = self.data['dt'].dt.year
         self.data = self.data.sort_values(by='dt')
@@ -66,7 +62,7 @@ class Visualize:
         self.get_theme() 
 
     """
-    Calculate the annual uncertainty for each city.
+    Calculate the annual uncertainty for each city/country.
     """
     def calculate_annual_uncertainty(self):
         annual_uncertainty = self.data.groupby(['Year', self.label])['AverageTemperatureUncertainty'].apply(lambda x: (x ** 2).sum() ** 0.5)
@@ -117,7 +113,7 @@ class Visualize:
         fig.update_mapboxes(bounds_east=180, bounds_west=-180, bounds_north=90, bounds_south=-70)
         fig.update_geos(
             resolution=110,
-            showcountries=True, countrycolor="Black",
+            showcountries=True, countrycolor='Black',
             lataxis = dict(range = [-90, 90]),
             lonaxis = dict(range = [-180, 180]),
             showocean=True, oceancolor=self.backgroundColor,
@@ -128,12 +124,12 @@ class Visualize:
     
 
     """
-    Show a line chart with the average temperature of a selected city in each month.
+    Show a line chart with the average temperature of a selected city/country in each month for a selected year.
 
     Parameters
     ----------
-    city_country : str
-        The name of the city to be shown
+    selected : str
+        The name of the city/country to be shown
     year : int
         The year to be shown
 
@@ -146,19 +142,20 @@ class Visualize:
         city_data = self.data[(self.data[self.label] == selected) & (self.data['Year'] == year)]
         month = city_data['dt'].dt.month
         fig = px.line(city_data, x=month, y='AverageTemperature', markers=True, color_discrete_sequence=[self.primaryColor])
-        fig.update_xaxes(title_text='Month')
+        fig.update_xaxes(title_text='Month',showgrid=False)
         fig.update_layout(xaxis={'tickmode': 'array',
                                  'tickvals':month.unique(),
                                  'ticktext': city_data['dt'].dt.strftime('%B').unique()})
+        fig.update_yaxes(showgrid=False)
         return self.fig_layout(fig)
 
     """
-    Show a line chart with the average temperature of a selected city in each year and it's uncertainty.
+    Show a line chart with the average temperature of a selected city/country in each year and it's uncertainty.
 
     Parameters
     ----------
-    city_country : str
-        The name of the city to be shown
+    selected : str
+        The name of the city/country to be shown
 
     Returns
     -------
@@ -195,10 +192,13 @@ class Visualize:
             name='Average Temperature',
             line=dict(color=self.primaryColor)
         ))
+        fig.update_xaxes(showgrid=False)
+        fig.update_yaxes(showgrid=False)
         return self.fig_layout(fig)
         
     """
-    Show a bubble map with the range of temperatures for each city for each year.
+    Show a bubble map with the range of temperatures for each city/country for each year.
+    Subclass should implement range_figure method.
 
     Parameters
     ----------
@@ -217,12 +217,11 @@ class Visualize:
         df['Size'] =  scaler.fit_transform(df[['Range']])
         if n is not None:
             df = df.groupby('Year').apply(lambda x: x.nlargest(n, 'Range')).reset_index(drop=True)
-        min = df['Range'].min()
-        max = df['Range'].max()
-        return self.range_figure(df,min,max)
+        return self.range_figure(df)
 
     """
-    Show a bubble map with the average temperature for each city for each year.
+    Show a bubble map with the average temperature for each city/country for each year.
+    Subclass should implement temperature_figure method.
 
     Parameters
     ----------
@@ -236,13 +235,11 @@ class Visualize:
     """
     def temperature(self,n=None):
         df = self.data_year.copy()
-        min = df['YearlyAverage'].min()
-        max = df['YearlyAverage'].max()
         if n is not None:
             df = df.groupby('Year').apply(lambda x: x.nlargest(n, 'YearlyAverage')).reset_index(drop=True)
         bubble_counts = df['Year'].value_counts()
         df['Size'] = df['Year'].apply(lambda x: 1000 / np.log((bubble_counts[x]) + 1))
-        return self.temperature_figure(df,min,max)
+        return self.temperature_figure(df)
 
 
     """
@@ -289,11 +286,13 @@ class Visualize:
                         name='Future Prediction'
                         )
         fig.update_layout(xaxis_title='Year', yaxis_title='Temperature')
+        fig.update_xaxes(showgrid=False)
+        fig.update_yaxes(showgrid=False)
         return self.fig_layout(fig)
     
 
     """
-    Calculate additional statistics about the dataset: average, minimum, maximum and standard deviation of the temperatures for each city.
+    Calculate additional statistics about the dataset: average, minimum, maximum and standard deviation of the temperatures for each city/country.
 
     Returns
     -------
@@ -309,12 +308,12 @@ class Visualize:
         return city_stats
     
     """
-    Show a boxplot and scatterplot with the distribution of temperatures for a selected city during each month.
+    Show a boxplot and scatterplot with the distribution of temperatures for a selected city/country during each month of the years.
 
     Parameters
     ----------
     city_country : str
-        The name of the city to be shown
+        The name of the city/country to be shown
 
     Returns
     -------
@@ -354,17 +353,64 @@ class Visualize:
                                  'tickvals':df['Month'].unique(),
                                  'ticktext': df['Month_Name'].unique()})
         fig.update_traces(line=dict(width=2))
+        fig.update_xaxes(showgrid=False)
+        fig.update_yaxes(showgrid=False)
         return self.fig_layout(fig)
 
+    """
+    Show a map with the range of temperatures for each city/country for each year.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The dataframe with the data to be shown
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        The figure with the map
+    """
+    @abstractmethod
+    def range_figure(self,df,min,max):
+        pass
+
+    """
+    Show a map with the average temperatures for each city/country for each year.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The dataframe with the data to be shown
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        The figure with the map
+    """
+    @abstractmethod
+    def temperature_figure(self,df,min,max):
+        pass
 
 
+
+"""
+This class is used to visualize the data for cities. It inherits from the Visualize class and implements the following methods:
+- range_figure: a bubble map with the range of temperatures for each city for each year
+- temperature_figure: a bubble map with the average temperature for each city for each year
+- heatmap: a heatmap with the average temperature of each city for each year
+- show_locations: a map with all the cities in the dataset
+- show_city: a map with the city of choice
+"""
 class City(Visualize):
     def __init__(self,data):
         self.data = data.copy()
         group = ["City_Country", 'Year', 'Latitude', 'Longitude']
         super().__init__('City_Country',group)
 
-    def range_figure(self,df,min,max):
+    #Implement abstract method
+    def range_figure(self,df):
+        min = df['Range'].min()
+        max = df['Range'].max()
         fig = px.scatter_mapbox(df,
                                 lat='Latitude',
                                 lon='Longitude',
@@ -388,8 +434,10 @@ class City(Visualize):
                                 })
         return self.fig_layout(fig)
     
-    
-    def temperature_figure(self,df,min,max):
+    #Implement abstract method
+    def temperature_figure(self,df):
+        min = df['YearlyAverage'].min()
+        max = df['YearlyAverage'].max()
         fig = px.scatter_mapbox(df,
                         lat='Latitude',
                         lon='Longitude',
@@ -442,6 +490,7 @@ class City(Visualize):
                                     'Longitude': False,
                                 })
         return self.fig_layout(fig)
+    
     """
     Show a map with all the cities in the dataset.
 
@@ -502,9 +551,44 @@ class City(Visualize):
     
 
 
+
+"""
+This class is used to visualize the data for countries. It inherits from the Visualize class and implements the following methods:
+- range_figure: a bubble map with the range of temperatures for each country for each year
+- temperature_figure: a bubble map with the average temperature for each country for each year
+- country_to_continent: a function to get the continent of a country
+"""
 class Country(Visualize):
+    """
+    Initialize the class with the data and calculate the yearly average temperature.
+    Sets the continent for each country and removes countries with no continent.
+    For some countries, the continent is not available in the pycountry_convert library, so it is manually set.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        The dataframe containing the climate data
+
+    Attributes
+    ----------
+    data : pandas.DataFrame
+        The original input data
+    data_year : pandas.DataFrame
+        Processed data with yearly averages and other statistics
+    primaryColor : str
+        Primary color for visualization theme
+    backgroundColor : str
+        Background color for visualization theme
+    secondaryBackgroundColor : str
+        Secondary background color for visualization theme
+    textColor : str
+        Text color for visualization theme
+    """
     def __init__(self,path):
         self.data = pd.read_csv(path,index_col=False)
+        self.data = self.data[self.data['Country'] != 'Denmark']
+        self.data['Country'] = self.data['Country'].str.replace('Burma', 'Myanmar')
+        self.data.loc[self.data['Country'] == 'Denmark (Europe)', 'Country'] = 'Denmark'
         self.data.loc[:,'Continent'] = self.data['Country'].apply(self.country_to_continent)
         self.data.loc[(self.data['Country'] == 'Congo (Democratic Republic Of The)') | (self.data['Country'] == "Côte D'Ivoire"), 'Continent'] = 'Africa'
         self.data.loc[self.data['Country'] == 'Bosnia And Herzegovina', 'Continent'] = 'Europe'
@@ -514,6 +598,19 @@ class Country(Visualize):
         group = ['Country', 'Year', 'Continent']
         super().__init__('Country',group)
 
+    """
+    Get the continent of a country.
+
+    Parameters
+    ----------
+    country_name : str
+        The name of the country
+
+    Returns
+    -------
+    country_continent_name : str
+        The name of the continent
+    """
     def country_to_continent(self,country_name):
         try:
             country_alpha2 = pc.country_name_to_country_alpha2(country_name)
@@ -523,13 +620,14 @@ class Country(Visualize):
             country_continent_name = None
         return country_continent_name
 
-    def temperature_figure(self,df,min,max):
+    #Implement abstract method
+    def temperature_figure(self,df):
         fig = px.choropleth(df,
-                            locations="Country",
-                            locationmode = "country names", 
-                            color="YearlyAverage", 
-                            hover_name="Country",
-                            animation_frame="Year",
+                            locations='Country',
+                            locationmode = 'country names', 
+                            color='YearlyAverage', 
+                            hover_name='Country',
+                            animation_frame='Year',
                             range_color=[min,max],
                             color_continuous_scale=px.colors.diverging.Portland,
                             hover_data={
@@ -540,7 +638,8 @@ class Country(Visualize):
         fig.update_layout(dragmode=False)
         return self.fig_layout(fig)
     
-    def range_figure(self,df,min,max):
+    #Implement abstract method
+    def range_figure(self,df):
         fig = px.choropleth(df,
                         locations='Country',
                         locationmode='country names',
