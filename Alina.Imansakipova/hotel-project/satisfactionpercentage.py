@@ -2,11 +2,10 @@ import pandas as pd
 import openpyxl
 hotelsdata = pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/python-project/hotels/hotels.xlsx").set_index('hotel')
 guestdata = pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/python-project/hotels/guests.xlsx").set_index('guest')
-preferencesdata=pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/python-project/hotels/preferences.xlsx").set_index(['guest','hotel'])
+preferencesdata=pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/python-project/hotels/preferences.xlsx").drop_duplicates(subset=['guest','hotel'])
 
 def calculate_satisfaction_percentage(guest_id, hotel_id, preferencesdata):
-    guest_preferences = preferencesdata[preferencesdata.index == guest_id].reset_index()
-
+    guest_preferences = preferencesdata[preferencesdata['guest'] == guest_id].reset_index()
 
     if guest_preferences.empty:
         # No preferences, so 100% satisfaction
