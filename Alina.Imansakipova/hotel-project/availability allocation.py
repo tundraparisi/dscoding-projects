@@ -8,7 +8,6 @@ preferencesdata=pd.read_excel(r"/Users/menimalina/Desktop/uni_due/coding/python/
 from satisfactionpercentage import calculate_satisfaction_percentage
 from vizualization import visualize_allocation
 def allocate_preferred_rooms(hotel_id, hotel_row, guestdata, preferencesdata, allocation):
-    # !!!!!!!!!!!!!!!!! to recall 'hotel' column
     guests_who_preferred_hotel = preferencesdata[preferencesdata['hotel'] == hotel_id]['guest']
     #True when guest prefers hotel and he/she doesn't live anywhere at the moment, false - when they have a place to live => we have to exclude them.
     guests_to_allocate = guests_who_preferred_hotel[~guests_who_preferred_hotel.isin(allocation['guest_id'])]
