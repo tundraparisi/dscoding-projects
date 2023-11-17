@@ -1,6 +1,8 @@
 import math
 """
 -- Documentation --
+A set of functions used to compute the best road from a city to another.
+
     **calculate_distance(city1, city2, route)**
         Calculates the great-circle distance between two cities on the Earth's surface using their latitude and longitude coordinates.
         
