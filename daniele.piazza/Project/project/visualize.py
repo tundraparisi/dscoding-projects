@@ -622,6 +622,8 @@ class Country(Visualize):
 
     #Implement abstract method
     def temperature_figure(self,df):
+        min = df['YearlyAverage'].min()
+        max = df['YearlyAverage'].max()
         fig = px.choropleth(df,
                             locations='Country',
                             locationmode = 'country names', 
@@ -640,6 +642,8 @@ class Country(Visualize):
     
     #Implement abstract method
     def range_figure(self,df):
+        min = df['Range'].min()
+        max = df['Range'].max()
         fig = px.choropleth(df,
                         locations='Country',
                         locationmode='country names',
