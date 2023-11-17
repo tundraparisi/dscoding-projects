@@ -21,17 +21,22 @@ class NetflixQuiz:
         
 
     def generate_genre_question(self):
-        question = f"Which of the following belongs to the horror genre?"
+        
         correct_answers_all = []
         incorrect_answers_all = []
+        all_genres = ['Horror', 'Comedies', 'Romantic Movies', 'Korean TV Shows', 'Documentaries', 'Reality TV','Anime Features', 'Action & Adventure']
 
-        for i in range(len(self.data)):
-            genre = self.data.loc[i, 'listed_in']
-            if 'Horror' in genre:
-                correct_answers_all.append(self.data.loc[i, 'title'])
-            else: incorrect_answers_all.append(self.data.loc[i, 'title'])
+        for _ in range(len(self.data)):
+            target_genre = random.choice(all_genres)
+            question = f"Which of the following belongs to the genre '{target_genre}'?"
+
+            for i in range(len(self.data)):
+                genre = self.data.loc[i, 'listed_in']
+                if target_genre in genre:
+                    correct_answers_all.append(self.data.loc[i, 'title'])
+                else: incorrect_answers_all.append(self.data.loc[i, 'title'])
             
-        return question, correct_answers_all, incorrect_answers_all
+            return question, correct_answers_all, incorrect_answers_all
 
 
 
@@ -56,70 +61,40 @@ class NetflixQuiz:
         incorrect_options = random.sample(incorrect_answers_all, 3)
         
         options = [correct_option]+incorrect_options
+        random.shuffle(options)
         print(question)
         for i, answer in enumerate(options, 1):
             print(f"{i}.{answer}")
 
         user_answer = input("Your choice: ")
-        return user_answer
+        correct_index = options.index(correct_option)+1
+        return user_answer, correct_option, correct_index
+    
+
 
     def play_quiz(self):
             difficulty = input("Choose difficulty (easy, medium, or hard): ")
-            num_questions = 5
+            num_questions = 3
 
-            for _ in range(num_questions):
+            for _ in range(num_questions):      #you are not interested in how many times the loop is run,just that it should run some specific number of times overall.
                 if difficulty == 'easy':
-                    question, correct_answers, incorrect_answers = self.generate_genre_question()
+                    question, correct_answers_all, incorrect_answers_all = self.generate_genre_question()
                 elif difficulty == 'medium':
-                    question, correct_answers, incorrect_answers = self.generate_dir_question()
+                    question, correct_answers_all, incorrect_answers_all = self.generate_rating_question()
                 elif difficulty == 'hard':
-                    question, correct_answers, incorrect_answers = self.generate_rating_question()
+                    question, correct_answers_all, incorrect_answers_all = self.generate_dir_question()
                 else:
                     print("Invalid difficulty level. Please choose from 'easy', 'medium', or 'hard'.")
                     return
                 
-                user_answer = self.present_question(question, correct_answers, incorrect_answers)
-
-                if user_answer and int(user_answer) == 1:
+                user_answer, correct_option,  correct_index = self.present_question(question, correct_answers_all, incorrect_answers_all)
+                self.correct_answers.append(correct_option)
+                if int(user_answer) == correct_index:
                     self.score += 1
-                    # Store the data consistently in the correct_answers list
-                    self.correct_answers.append((question, correct_answers, []))
-                else:
-                    self.correct_answers.append((question, correct_answers, incorrect_answers))
-
-
-            print(f"Your final score: {self.score}/{num_questions}")
-
-            print("\nCorrect and Incorrect Answers:")
-            for question, *answers in self.correct_answers:
-                print(question)
-                if len(answers) == 1:
-                    print(f"Correct Answer: {answers[0]}")
-                else:
-                    print(f"Correct Answer: {answers[0]}")
-                    print(f"Incorrect Answers: {', '.join(answers[1:])}")
-                print("\n")
-
-    """def present_dir_question (self, question, correct_answer, incorrect_answers):
-        print(question)
-        all_answers = [correct_answer] + incorrect_answers 
-        #[]-creating a list from a single string, incorrect answers is already a list of strings
-
-        random.shuffle(all_answers)
-
-        for i, answer in enumerate(all_answers, 1):
-            print(f"{i}. {answer}")      #{}placeholders for variables in a string """
-
-
-
-    """  def choose_difficulty_level (self, difficulty):
-        if difficulty == 'easy':
-            return self.generate_genre_question
-        elif difficulty == 'medium':
-            return self.generate_dir_question
-        elif difficulty == 'hard':
-            return 
-        else: print("Invalid difficulty level. Please choose from 'easy', 'medium', or 'hard'.") """
+                else: pass
+                
+            print(f"Your final score is {self.score}/{num_questions}")
+            print(f"Correct answers were {', '.join(self.correct_answers)}")
 
 
 quiz_generator = NetflixQuiz()

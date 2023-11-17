@@ -13,12 +13,6 @@ def bayesian_average_funct(row):
 
 
 
-# beta distribution function to calculate bayesian average
-def calculate_bayesian_average(rating_sum, rating_number, prior_weight, prior_average):
-    alpha = prior_weight + rating_sum
-    beta_ = prior_weight + rating_number - rating_sum
-    mean = beta.stats(alpha, beta_, moments='m')
-    return mean
 
 
 
