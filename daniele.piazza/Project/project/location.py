@@ -1,3 +1,6 @@
+import pandas as pd
+import requests
+
 """
 This class is used to upload the data and update the coordinates of the cities.
 It contains the following methods:
@@ -8,8 +11,6 @@ _google_coords: get the coordinates from the google api
 get_coordinates: get the coordinates of the cities
 update_file: update the csv file with the new coordinates
 """
-import pandas as pd
-import requests
 class Location:
     """
     Initialize the class with the path of the CSV file and the Google API key. 
