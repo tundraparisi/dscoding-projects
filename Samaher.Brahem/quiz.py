@@ -1,9 +1,9 @@
+
 import random
 
 class Quiz:
-    def __init__(self, data_frame=None, movie_data=None):
-        self.data_frame = data_frame
-        self.movie_data = movie_data  # Declaring movie_data as a class attribute
+    def __init__(self, movie_data):
+        self.movie_data = movie_data
 
     def determine_difficulty_level(self, year, votes):
         if (year >= 2010 and votes >= 500000) or (year < 2010 and votes >= 1000000):
@@ -75,8 +75,8 @@ class Quiz:
                 generator_info = random.choice(question_generators)
                 question_type, correct_answer_column = generator_info['params']
 
-                row_index = random.randint(0, len(self.data_frame) - 1)
-                row = self.data_frame.iloc[row_index]
+                row_index = random.randint(0, len(self.movie_data) - 1)
+                row = self.movie_data.iloc[row_index]
 
                 question_info = generator_info['generator'](row, user_difficulty, question_type, correct_answer_column)
 
