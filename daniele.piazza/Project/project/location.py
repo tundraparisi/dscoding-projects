@@ -1,6 +1,28 @@
 import pandas as pd
 import requests
+
+"""
+This class is used to upload the data and update the coordinates of the cities.
+It contains the following methods:
+__init__: initialize the class
+_coords: convert the coordinate from the format Coord(N/S/E/W)
+_coordinates: convert latitude and longitude
+_google_coords: get the coordinates from the google api
+get_coordinates: get the coordinates of the cities
+update_file: update the csv file with the new coordinates
+"""
 class Location:
+    """
+    Initialize the class with the path of the CSV file and the Google API key. 
+    Also, convert the format of the date to datetime.
+
+    Parameters
+    ----------
+    path : str
+        Path of the CSV file
+    api_key : str
+        Google API key
+    """
     def __init__(self, path, api_key):
         self.path = path
         self.api_key = api_key
@@ -9,19 +31,59 @@ class Location:
         self.data['Year'] = self.data['dt'].dt.year
         self.data['City_Country'] = self.data['City'] + ', ' + self.data['Country']
     
+    """
+    Convert the coordinate from the format Coord(N/S/E/W)
+
+    Parameters
+    ----------
+    x : str
+        Coordinate in the format Coord(N/S/E/W)
+
+    Returns
+    -------
+    coord : float
+        Coordinate in the format float
+    """
     def _coords(self,x):
         sign = 1 if x[-1] in ('N', 'E') else -1
         return sign * float(x[:-1])
 
+    """
+    Convert latitude and longitude
+
+    Parameters
+    ----------
+    city : pandas.core.series.Series
+        Dataframe with the city, country, latitude and longitude
+
+    Returns
+    -------
+    location : list
+        List with the latitude and longitude of the city
+    """
     def _coordinates(self,city):
         return [self._coords(city['Latitude']), self._coords(city['Longitude'])]
 
+    """
+    Get the coordinates from the google api
+
+    Parameters
+    ----------
+    city : pandas.core.series.Series
+        Dataframe with the city, country, latitude and longitude
+
+    Returns
+    -------
+    location : list
+        List with the latitude and longitude of the city
+    """
     def _google_coords(self,city):
+        # Google api can't find: Bally, Nigel, Sakura
         try:
             base_url = "https://maps.googleapis.com/maps/api/geocode/json"
             params = {
-                "address": f"{city['City']}, {city['Country']}",
-                "key": self.api_key
+                'address': f"{city['City']}, {city['Country']}",
+                'key': self.api_key
             }
             response = requests.get(base_url, params=params).json()
             if response['status'] == "OK":
@@ -33,6 +95,14 @@ class Location:
             print(f"Error getting coordinates for {city['City']}: {str(e)}")
         return None
 
+    """
+    Get the coordinates of the cities
+
+    Returns
+    -------
+    cities_coord : dict
+        Dictionary with the city and the coordinates
+    """
     def get_coordinates(self):
         cities = self.data[['City', 'Country', 'Latitude', 'Longitude']].drop_duplicates().reset_index(drop=True)
         cities_coord = {}
@@ -48,6 +118,9 @@ class Location:
                     cities_coord[city_country] = self._coordinates(cities.iloc[i])
         return cities_coord
 
+    """
+    Update the csv file with the new coordinates
+    """
     def update_file(self):
         cities_coord = self.get_coordinates()
         self.data['City_Country'] = self.data['City'] + ', ' + self.data['Country']

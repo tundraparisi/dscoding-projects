@@ -1,6 +1,6 @@
-from data import DataManager
+from data_manager import DataManager
+from quiz import quiz_game
 
-# Opening the connection
 imdb_data = DataManager(
     dbname='imdb',
     user='samaher',
@@ -9,23 +9,10 @@ imdb_data = DataManager(
     port='5432'
 )
 
-# Get data from the movie table
+# Get the movie data from the database
 movie_data = imdb_data.get_movie()
 
-# Get data from the genre table
-genre_data = imdb_data.get_genre()
+# Execute the quiz game using movie_data
+quiz_game(movie_data)
 
-# Get data from the produced table
-prod_data = imdb_data.get_prod()
-
-# Get data from the rating table
-rating_data = imdb_data.get_rating()
-
-# Get data from the crew table
-crew_data = imdb_data.get_crew()
-
-
-
-
-# Closing the connection
 imdb_data.close_connection()
