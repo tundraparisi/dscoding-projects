@@ -38,3 +38,8 @@ I use the [following Kaggle dataset](https://www.kaggle.com/datasets/datasnaek/c
 - [X] Create a function to delete unecessary columns
 - [X] Create a column with a calculates average ELO rating of games
 - [X] Arrange the games according to the ELO rating of the game (by hundreds)
+- [X] Write a parser function to collect all game styles
+- [ ] Classify openings by the game style
+- [X] Delete openings that appear less than 10 times
+- [ ] Calculate the win rate for each opening
+- [ ] 
