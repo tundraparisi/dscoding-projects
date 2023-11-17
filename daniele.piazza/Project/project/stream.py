@@ -5,7 +5,7 @@ import pandas as pd
 import os
 #Change .streamlit/config.toml to change the theme color, the map will change accordingly
 
-"""
+_="""
  This file contains the streamlit app.
 It contains the following methods:
     - load_location: load the location data
@@ -29,7 +29,7 @@ all_path = "Data/GlobalLandTemperaturesByCity.csv"
 major_path = "Data/GlobalLandTemperaturesByMajorCity.csv"
 country_path = "Data/GlobalLandTemperaturesByCountry.csv"
 
-"""
+_="""
 Load the location data
 
 Parameters
@@ -51,7 +51,7 @@ def load_location(path, api_key):
         location.update_file()
     return location
 
-"""
+_="""
 Load the city data
 
 Parameters
@@ -69,7 +69,7 @@ def load_city_data(data):
     city = City(data)
     return city
 
-"""
+_="""
 Load the country data
 
 Parameters
@@ -93,7 +93,7 @@ major = load_city_data(location_major.data)
 all = load_city_data(location_all.data)
 country = load_country_data(country_path)
 
-"""
+_="""
 Create the html files for the heatmaps
 """
 def create_html():
@@ -102,7 +102,7 @@ def create_html():
     all.temperature().write_html("temperature_all.html")
     all.range().write_html("range_all.html")
 
-"""
+_="""
 Load the html files for the heatmaps. If the file doesn't exist, create it.
 
 Parameters
@@ -122,7 +122,7 @@ def load_html(path):
     with open(path, 'r') as f:
         return f.read()
     
-"""
+_="""
 Choose the dataset to display
 
 Returns
@@ -152,7 +152,7 @@ def choose_dataset():
         range = load_html("range_all.html")
     return location, vis, temperature, range
 
-"""
+_="""
 Display the statistics of the dataset
 
 Parameters
@@ -174,7 +174,7 @@ def display_statistics(data,label):
     stats.index.name = label if isinstance(data, City) else "Country"
     st.dataframe(stats, width=1400, height=420)
 
-"""
+_="""
 Display the heatmap of the dataset
 
 Parameters
@@ -194,13 +194,15 @@ html : str
 """
 def display_heatmap(data, title, label, number = None, max = None, html = None):
     st.subheader(title)
-    st.caption("This heatmap displays the range (max-min) of the temperatures for each {} in the dataset.".format(label))
+    average = True if title.endswith("Average Temperature Heatmap") else False
+    caption = "average" if average else "range (max-min)"
+    st.caption("This heatmap displays the {} of the temperatures for each {} in the dataset.".format(caption, label))
     if number == max and html is not None:
         st.components.v1.html(html, width=1400, height=800, scrolling=True)
     else:
-        st.plotly_chart(data.range(number) if title.endswith("Range Heatmap") else data.temperature(number))
+        st.plotly_chart(data.range(number) if average else data.temperature(number))
 
-"""
+_="""
 Display the boxplot of the dataset
 
 Parameters
@@ -216,7 +218,7 @@ def display_boxplot(data, selected):
     boxplot = data.boxplot(selected)
     st.plotly_chart(boxplot)
 
-"""
+_="""
 Display the line chart of the dataset
 
 Parameters
@@ -232,7 +234,7 @@ def display_line_chart(data, selected):
     fig = data.line(selected)
     st.plotly_chart(fig)
 
-"""
+_="""
 Display the prediction of the dataset
 
 Parameters
@@ -248,7 +250,7 @@ def display_prediction(data, selected):
     predicted_temperatures = data.predict_temperature(selected)
     st.plotly_chart(predicted_temperatures)
 
-"""
+_="""
 Display the line chart of the dataset for a specific year
 
 Parameters
@@ -274,11 +276,9 @@ def main():
         display_statistics(vis,"City")
         max = vis.data_year['City_Country'].nunique()
         st.subheader("Temperature Range Heatmap")
-        st.caption("This heatmap displays the range (max-min) of the temperatures for each city in the dataset.")
         number_range = st.number_input("Choose the number of cities with the most significant temperature range to display on the map. Enter a number from 1 to {}.".format(max), min_value=1, max_value=max, value=max)
         display_heatmap(vis, "Temperature Range Heatmap", "city", number_range, max, range)
         st.subheader("Average Temperature Heatmap")
-        st.caption("This heatmap displays the average temperature for each city in the dataset.")
         number_temp = st.number_input("Choose the number of hottest cities to display on the temperature map. Enter a number from 1 to {}.".format(max), min_value=1, max_value=max, value=max)
         display_heatmap(vis, "Average Temperature Heatmap", "city", number_temp, max, temperature)
     elif page == "Specific City Information":
@@ -322,6 +322,6 @@ def main():
             selected_year = st.selectbox("Choose a year", country.data_year[country.data_year['Country']==selected_country]['Year'].unique())
             display_line_year(country, selected_country, selected_year)
 
-            
+
 if __name__ == "__main__":
     main()
