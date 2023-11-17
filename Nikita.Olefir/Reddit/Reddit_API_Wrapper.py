@@ -6,5 +6,5 @@ reddit = praw.Reddit(
     client_secret=CLIENT_SECRET,
     username=USERNAME,
     password=PASSWORD,
-    user_agent='MyAPI/1 by (nikitaolefir)'
+    user_agent="MyAPI/1 by (nikitaolefir)",
 )
