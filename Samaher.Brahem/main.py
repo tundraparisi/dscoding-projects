@@ -1,4 +1,5 @@
-from data import DataManager
+from data_manager import DataManager
+from quiz import quiz_game
 
 imdb_data = DataManager(
     dbname='imdb',
@@ -8,16 +9,10 @@ imdb_data = DataManager(
     port='5432'
 )
 
-# Get data for movie release years
-release_years_data = imdb_data.get_movie_release_years()
-print("Movie Release Years:")
-print(release_years_data)
+# Get the movie data from the database
+movie_data = imdb_data.get_movie()
 
-# Get data for movie genres
-genre_data = imdb_data.get_movie_genres()
-print("\nMovie Genres:")
-print(genre_data)
+# Execute the quiz game using movie_data
+quiz_game(movie_data)
 
-
-# Close the connection when done
 imdb_data.close_connection()
