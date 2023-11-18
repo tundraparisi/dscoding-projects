@@ -1,5 +1,5 @@
 import pandas as pd
-from UDFs import preprocess
+from UDFs import TextPreprocessor
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 from sklearn.model_selection import train_test_split
@@ -9,26 +9,32 @@ from sklearn.naive_bayes import MultinomialNB
 import joblib
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay
 
-# Loading the data
-dfjokes = pd.read_csv('jokes.csv')
-print(dfjokes.head())
+# Load the data
+df_jokes = pd.read_csv('jokes.csv')
+print(df_jokes.head())
 
-print(dfjokes.isnull().any()) # Checking for missing values
-print(dfjokes.dtypes) # Checking the data types
-print(dfjokes.shape[0]) # Checking the number of observations
+# Check for missing values
+print("There are no missing values." if not df_jokes.isnull().any().any() else "There are missing values in the dataframe.")
 
-# Preprocessing 'text' and updating the dataframe
-dfjokes['text'] = dfjokes['text'].apply(preprocess)
-print(dfjokes.head())
+# Check for data types
+print("\n".join([f"{column}: {dtype}" for column, dtype in df_jokes.dtypes.items()]))
 
-# Plot: Text length: humor vs. not humor
-dfjokes['text_length'] = dfjokes['text'].apply(len)
-plt.hist(dfjokes[dfjokes['humor'] == True]['text_length'], bins = 30, alpha = 0.5, label = 'Humorous')
-plt.hist(dfjokes[dfjokes['humor'] == False]['text_length'], bins = 30, alpha = 0.5, label = 'Unhumorous')
+# Check the number of observations
+print(f"The dataframe contains {df_jokes.shape[0]} observations.")
+
+# Preprocess 'text' and update the dataframe
+text_preprocessor = TextPreprocessor()
+df_jokes['processed_text'] = df_jokes['text'].apply(text_preprocessor.preprocess)
+print(df_jokes.head())
+
+# Plot: Text length distribution for Humor vs. Not Humor
+df_jokes['text_length'] = df_jokes['processed_text'].apply(len)
+plt.hist(df_jokes[df_jokes['humor'] == True]['text_length'], bins = 30, alpha = 0.5, label = 'Humorous')
+plt.hist(df_jokes[df_jokes['humor'] == False]['text_length'], bins = 30, alpha = 0.5, label = 'Unhumorous')
 plt.legend()
-plt.xlabel('Text length')
+plt.xlabel('Text Length')
 plt.ylabel('Frequency')
-plt.title('Text Length Distribution for Humor vs. Not Humor')
+plt.title('Distribution of Text Length for Humorous vs. Unhumorous')
 plt.show()
 
 # Plot: Wordcloud: humor vs. not humor
@@ -68,7 +74,7 @@ X_train = vectorizer.fit_transform(X_train)
 X_test = vectorizer.transform(X_test)
 
 # Saving the trained vectorizer
-#joblib.dump(vectorizer, 'vectorizer.joblib')
+joblib.dump(vectorizer, 'vectorizer.joblib')
 
 # Logistic regression (LR) with Stochastic Gradient Descent (SGD) training
 lr_classifier = SGDClassifier(loss = 'log_loss', max_iter = 1000)
@@ -99,4 +105,4 @@ plt.show()
 # Since MNB classifier shows higher accuracy, this one will be used
 
 # Saving the trained MNB classifier
-#joblib.dump(mnb_classifier, 'mnb_classifier.joblib')
+joblib.dump(mnb_classifier, 'mnb_classifier.joblib')
