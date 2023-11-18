@@ -1,10 +1,13 @@
 import pandas as pd
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+import json 
 
 class Quiz:
     def __init__(self, data_frame):
         self.movie_data = data_frame
+        self.game_scores = []
 
     def determine_difficulty_level(self, year, votes):
         if (year >= 2010 and votes >= 500000) or (year < 2010 and votes >= 1000000):
@@ -70,12 +73,58 @@ class Quiz:
                 }
                 return question_dict
 
+    def load_scores(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                self.game_scores = json.load(file)
+        except FileNotFoundError:
+            self.game_scores = []
+
+    def save_scores(self, filename):
+        with open(filename, 'w') as file:
+            json.dump(self.game_scores, file)
+
+
+    def display_histogram(self, player_name):
+        player_scores = {name: score for name, score in self.game_scores}
+        plt.figure(figsize=(10, 6), dpi=80)
+
+        # Extract player names and scores
+        names = list(player_scores.keys())
+        scores = list(player_scores.values())
+
+        # Plotting player scores
+        bars = plt.bar(names, scores, color='#202060')
+
+        # Highlight the current player's score in a different color and add data label
+        if player_name in player_scores:
+            index = names.index(player_name)
+            bars[index].set_color('#5bc8af')
+            plt.text(index, scores[index], str(scores[index]), ha='center', va='bottom', fontname='Quicksand', fontsize=10)
+
+        plt.xlabel('Players', fontname='Quicksand', fontsize=12)
+        plt.ylabel('Scores', fontname='Quicksand', fontsize=12)
+        plt.title('Players\' Scores Distribution', fontname='Quicksand', fontsize=16)
+        plt.xticks(rotation=45, fontname='Quicksand', fontsize=10)  # Rotate x-axis labels for readability
+        plt.yticks(fontname='Quicksand', fontsize=10)
+        plt.grid(axis='y')  # Show grid lines only for y-axis
+        plt.tight_layout()
+        plt.show()
+
+
     def quiz_game(self):
         difficulty_levels = ['easy', 'medium', 'hard']
         total_score = 0
         used_questions = []
 
+
+        print('HELLO THERE! Welcome to ✨ The Quiz ✨')
+        player_name = input("What do you want us to call you? ")
+        print('Alright, ' + player_name + '!\n GET READY TO PLAY 🔥')
+        print("----------------------------")
+
         user_difficulty = input("Choose a difficulty level (easy, medium, hard): ").lower()
+        print("----------------------------")
 
         while user_difficulty not in difficulty_levels:
             print("Invalid difficulty level. Please choose from: easy, medium, hard")
@@ -126,4 +175,25 @@ class Quiz:
             print(f"Your score for this question: {score}")
             print("----------------------------")
 
+        game_score = (player_name, total_score)
+        self.load_scores('game_scores.json')  # Load existing scores
+
+        # If the player already exists in the scores, update their score
+        player_exists = False
+        for index, (name, score) in enumerate(self.game_scores):
+            if name == player_name:
+                player_exists = True
+                self.game_scores[index] = (name, score + total_score)
+                break
+
+        # If the player doesn't exist, add their score to the list
+        if not player_exists:
+            self.game_scores.append(game_score)
+
         print(f"Total score: {total_score}")
+        print(f"Here's how you performed, {player_name}:")
+        self.display_histogram(player_name)
+
+        self.save_scores('game_scores.json')  # Save scores after each game in JSON format
+
+        return self.game_scores
