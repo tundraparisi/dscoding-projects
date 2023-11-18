@@ -33,8 +33,9 @@ class Quiz:
     def find_highest_score_movie(self, movie_options):
         self.movie_data['score'] = pd.to_numeric(self.movie_data['score'])
         filtered_data = self.movie_data[self.movie_data['official_title'].isin(movie_options)]
-        max_score_index = filtered_data['score'].idxmax()
-        highest_score_movie = filtered_data.loc[max_score_index, 'official_title']
+        max_score_index = np.argmax(filtered_data['score'].values)
+        highest_score_movie = filtered_data.iloc[max_score_index]['official_title']
+
         return highest_score_movie
 
     def generate_question(self, row, desired_difficulty, question_type, correct_answer_column):
@@ -103,6 +104,7 @@ class Quiz:
             json.dump(self.game_scores, file)
 
 
+
     def display_histogram(self, player_name):
         player_scores = {name: score for name, score in self.game_scores}
         plt.figure(figsize=(10, 6), dpi=80)
@@ -110,6 +112,13 @@ class Quiz:
         # Extract player names and scores
         names = list(player_scores.keys())
         scores = list(player_scores.values())
+
+        # Get indices to sort scores in descending order
+        sorted_indices = np.argsort(scores)[::-1]
+
+        # Rearrange names and scores based on sorted indices
+        names = [names[i] for i in sorted_indices]
+        scores = [scores[i] for i in sorted_indices]
 
         # Plotting player scores
         bars = plt.bar(names, scores, color='#202060')
@@ -128,6 +137,7 @@ class Quiz:
         plt.grid(axis='y')  # Show grid lines only for y-axis
         plt.tight_layout()
         plt.show()
+
 
 
     def quiz_game(self):
