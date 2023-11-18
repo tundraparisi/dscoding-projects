@@ -30,10 +30,11 @@ class Quiz:
         else:
             return 0
 
-    def find_highest_score_movie(self):
-        self.movie_data.loc[:, 'score'] = pd.to_numeric(self.movie_data['score'])
-        max_score_index = np.argmax(self.movie_data['score'].values)
-        highest_score_movie = self.movie_data.loc[max_score_index, 'official_title']
+    def find_highest_score_movie(self, movie_options):
+        self.movie_data['score'] = pd.to_numeric(self.movie_data['score'])
+        filtered_data = self.movie_data[self.movie_data['official_title'].isin(movie_options)]
+        max_score_index = filtered_data['score'].idxmax()
+        highest_score_movie = filtered_data.loc[max_score_index, 'official_title']
         return highest_score_movie
 
     def generate_question(self, row, desired_difficulty, question_type, correct_answer_column):
@@ -45,19 +46,34 @@ class Quiz:
 
         if difficulty_level == desired_difficulty:
             if question_type == 'Which one of these movies has the highest score on IMDb?':
-                highest_score_movie = self.find_highest_score_movie()
-                all_answers = list(set(self.movie_data['official_title'].unique()))
-                all_answers.remove(official_title)
-                other_options = [highest_score_movie] + random.sample(all_answers, 3)
+                all_movies = self.movie_data['official_title']
+                # Randomly select 4 movies 
+                selected_movies = random.sample(all_movies.tolist(), min(len(all_movies), 4))
+
+                # Find the highest-scored movie among the selected options
+                highest_score_movie = self.find_highest_score_movie(selected_movies)
+
+                other_options = selected_movies.copy()
                 random.shuffle(other_options)
                 options_mapping = {chr(ord('A') + i): option for i, option in enumerate(other_options)}
-                question_dict = {
-                    'question': f'{question_type}',
-                    'options': options_mapping,
-                    'correct_answer': chr(ord('A') + other_options.index(highest_score_movie)),
-                    'difficulty_level': difficulty_level
-                }
-                return question_dict
+
+                # Find the index of the correct answer within the options
+                correct_answer_index = -1
+                for i, option in enumerate(other_options):
+                    if option == highest_score_movie:
+                        correct_answer_index = i
+                        break
+
+                # Ensure correct_answer_index exists before assigning the correct_answer
+                if correct_answer_index != -1:
+                    question_dict = {
+                        'question': f'{question_type}',
+                        'options': options_mapping,
+                        'correct_answer': chr(ord('A') + correct_answer_index),
+                        'difficulty_level': difficulty_level
+                    }
+                    return question_dict
+
 
             else:
                 all_answers = list(set(self.movie_data[correct_answer_column].unique()))
@@ -72,6 +88,8 @@ class Quiz:
                     'difficulty_level': difficulty_level
                 }
                 return question_dict
+
+
 
     def load_scores(self, filename):
         try:
