@@ -1,3 +1,6 @@
+import pandas as pd
+import requests
+
 """
 This class is used to upload the data and update the coordinates of the cities.
 It contains the following methods:
@@ -8,8 +11,6 @@ _google_coords: get the coordinates from the google api
 get_coordinates: get the coordinates of the cities
 update_file: update the csv file with the new coordinates
 """
-import pandas as pd
-import requests
 class Location:
     """
     Initialize the class with the path of the CSV file and the Google API key. 
@@ -79,13 +80,13 @@ class Location:
     def _google_coords(self,city):
         # Google api can't find: Bally, Nigel, Sakura
         try:
-            base_url = "https://maps.googleapis.com/maps/api/geocode/json"
+            base_url = 'https://maps.googleapis.com/maps/api/geocode/json'
             params = {
                 'address': f"{city['City']}, {city['Country']}",
                 'key': self.api_key
             }
             response = requests.get(base_url, params=params).json()
-            if response['status'] == "OK":
+            if response['status'] == 'OK':
                 location = response['results'][0]['geometry']['location']
                 return [location['lat'], location['lng']]
             else:
@@ -108,7 +109,7 @@ class Location:
         for i in range(cities.shape[0]):
             city = cities.iloc[i]['City']
             country = cities.iloc[i]['Country']
-            city_country = f"{city}, {country}"
+            city_country = f'{city}, {country}'
             if city_country not in cities_coord:
                 coord = self._google_coords(cities.iloc[i])
                 if coord is not None:
