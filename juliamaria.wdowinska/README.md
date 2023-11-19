@@ -22,7 +22,7 @@ The project is structured as follows:
 
 - **UDFs.py**: Script containing two classes:
   - `TextPreprocessor`: class for preprocessing text data,
-  - `TextClassifier`: class for text classification using pre-trained models.
+  - `AppTextClassifier`: class for text classification using pre-trained models.
 
 - **app.py**: Script for the Humor Detection App.
 
