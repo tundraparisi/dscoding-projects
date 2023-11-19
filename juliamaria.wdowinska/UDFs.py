@@ -82,7 +82,6 @@ class TextClassifier:
         self.classifier = classifier
         self.vectorizer = vectorizer
 
-    # Method: classify text and display the results
     def classify_and_display(self, user_text_input):
 
         try:
@@ -100,6 +99,8 @@ class TextClassifier:
 
             # Step 4: Display probability of being humorous
             st.write(f'Probability of being humorous: {humor_probability[0][1]:.2f}')
+
+            return humor_prediction, humor_probability, result_message
         
         except Exception as e:
             # Handle errors
