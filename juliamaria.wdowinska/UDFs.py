@@ -86,5 +86,3 @@ class AppTextClassifier:
 
             # Step 4: Display probability of being humorous
             st.write(f'Probability of being humorous: {probability[0][1]:.2f}')
-
-            return prediction, probability, result
