@@ -217,7 +217,8 @@ class Quiz:
                 if not player_exists:
                     self.game_scores.append(game_score)
 
-                st.write(f"Total score: {total_score}")
+                st.subheader(f"Total score: {total_score}")
+                st.write("----------------------------")
                 st.write(f"Here's how you performed, {player_name}:")
                 self.display_histogram(player_name)
 
