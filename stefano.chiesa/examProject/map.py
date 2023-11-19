@@ -1,14 +1,33 @@
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
-import math
+import utils as ut
+import pandas as pd
+import calendar
+"""
+-- Documentation --
+    The class "Map" used to create maps.
+"""
 
 
 class Map:
     def __init__(self, ds, dw):
+        """
+        Initializes a Map object.
+
+        Parameters:
+        - `ds`: Geopandas DataFrame with city data, including information such as latitude, longitude, average temperature, city name, and date.
+        - `dw`: Geopandas DataFrame with world map data.
+        """
         self.ds = ds  # geopandas dataframe with city data
         self.dw = dw  # geopandas dataframe with world map data
 
     def create_map(self, legend=False, date =""):
+        """
+        Creates a map showing the position of the cities in the dataset
+        Parameters:
+        - legend: parameter to decide if showing the legend or not
+        - date: parameter to decide if choosing a date or not
+        """
         # create a world map
         axis = self.dw.plot(color='grey', edgecolor='black')
         self.ds.plot(column='AverageTemperature', ax=axis, markersize=80, legend=legend, legend_kwds={'shrink': 0.3})
@@ -18,6 +37,11 @@ class Map:
         plt.show()
 
     def create_map_date(self, date):
+        """
+        Show the average temperatures of the major cities in a given date
+        Parameters:
+        - date: the chosen date
+        """
         filtered_ds = self.ds[self.ds['dt'] == date]
 
         if not filtered_ds.empty:
@@ -28,6 +52,11 @@ class Map:
             print('Data not available for the given date.')
 
     def create_map_gif(self, dates):
+        """
+        Creates an animated GIF displaying temperature changes over a sequence of dates.
+        Parameters:
+        - `dates`: List of dates for creating the animation.
+        """
         fig, ax = plt.subplots(figsize=(20, 16))
         axis = self.dw.plot(ax=ax, color='grey', edgecolor='black')
         dates.sort()
@@ -52,20 +81,41 @@ class Map:
         animation.save('temperature_animation_dates.gif', fps=1)
 
     def date_map_gif(self, min_date, max_date):
+        """
+        Creates an animated GIF displaying temperature changes within a date range.
+
+        Parameters:
+        - `min_date`: Start date for the animation.
+        - `max_date`: End date for the animation.
+        """
         panda_dates = self.ds[(self.ds['dt'] >= min_date) & (self.ds['dt'] <= max_date)]
         dates = panda_dates['dt'].unique().tolist()
         self.create_map_gif(dates)
 
     def create_map_range(self, start_date, end_date):
+        """
+        Creates a world map highlighting the top 5 cities with the highest temperature range within a specified date range.
+
+        Parameters:
+        - `start_date`: Start date for filtering the dataset.
+        - `end_date`: End date for filtering the dataset.
+        """
+        # filter data within the specified date range
         filtered_data = self.ds[(self.ds['dt'] >= start_date) & (self.ds['dt'] <= end_date)]
+        # calculate temperature range for each city within the specified date range
         city_temperature_ranges = filtered_data.groupby('City')['AverageTemperature'].agg(['min', 'max']).apply(
             lambda x: (x['min'], x['max']), axis=1)
+        # get top 5 cities with the highest temperature difference within the specified date range
         top_cities = city_temperature_ranges.apply(lambda x: x[1] - x[0]).nlargest(5).index
+        # filter data for top 5 cities within the specified date range
         top_cities_data = filtered_data[filtered_data['City'].isin(top_cities)]
 
+        # create a world map
         axis = self.dw.plot(color='grey', edgecolor='black')
+        # plot top 5 cities with the highest temperature range within the specified date range
         top_cities_data.plot(column='AverageTemperature', ax=axis, markersize=80)
 
+        # annotate the map with city names and temperature ranges
         i = -80
         for idx, (city, (min_temp, max_temp)) in enumerate(city_temperature_ranges[top_cities].items()):
             plt.text(0, i, f'{city}: {round(min_temp, 1)}°C to {round(max_temp, 1)}°C: {round(max_temp - min_temp, 1)}C°',
@@ -76,41 +126,45 @@ class Map:
         fig.set_size_inches(20, 16)
         plt.show()
 
-    def calculate_distance(self, city1, city2, route):
-        lat1, lon1 = city1['Latitude'], city1['Longitude']
-        lat2, lon2 = city2['Latitude'], city2['Longitude']
+    def best_route_obj(self, date, start_city, target_city):
+        """
+        Finds the best route from a starting city to a target city based on both distance and temperature.
+        ! Be aware that the function.py module must be accessible !
 
-        radius = 6371
-        dlat = math.radians(lat2 - lat1)
-        dlon = math.radians(lon2 - lon1)
-        a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        distance = radius * c
+        Parameters:
+        - `date`: Date for filtering the dataset.
+        - `start_city`: Name of the starting city.
+        - `target_city`: Name of the target city.
 
-        if distance == 0 or city1['City'] in route:
-            return 1000000000
-        else:
-            return distance
+        Returns:
+        - List representing the best route from the `start_city` to the `target_city`.
+        """
+        path = ut.best_route(self.ds, '2001-04-01', 'Peking', 'Los Angeles')
+        return path
 
-    def warmest_closest_city(self, current_city, route):
-        cities = []
-        for idx, city in self.ds.iterrows():
-            distance = self.calculate_distance(city, current_city, route)
-            cities.append((distance, city))
+    def avg_temperature_graph(self, city, month):
+        """
+        Plots the average temperature for a specific city over the specified month and save it as a png file.
 
-        top5 = sorted(cities, key=lambda x: x[0])[:5]
-        warmest = max(top5, key=lambda x: x[1]['AverageTemperature'])
+        Parameters:
+        - `city`: Name of the city for which the average temperature will be plotted.
+        - `month`: Numeric representation of the month (1 to 12).
+        """
+        self.ds['dt'] = pd.to_datetime(self.ds['dt'])
+        filtered_ds = self.ds[(self.ds['City'] == city) & (self.ds['dt'].dt.month == month)]
+        # get the month name using the calendar module
+        month = calendar.month_name[month]
+        # plotting
+        plt.figure(figsize=(10, 6))
+        plt.plot(filtered_ds['dt'], filtered_ds['AverageTemperature'], color='red', marker='o')
+        plt.title(
+            f'Average Temperature (C°) in {city} for {month}- from {filtered_ds["dt"].dt.year.min()} to {filtered_ds["dt"].dt.year.max()}',
+            fontsize=15)
+        plt.xlabel('Year')
+        plt.ylabel('Average Temperature')
+        plt.grid(True)
+        plt.savefig('average_temperature_years.png')
 
-        return warmest[1].loc['City']
 
-    def best_route(self, date, start_city, target_city):
-        ds = self.ds[self.ds['dt'] == date]
-        route = [start_city]
-        current_city = start_city
 
-        while current_city != target_city:
-            current_city_row = ds[ds['City'] == current_city].iloc[0]
-            warmest = self.warmest_closest_city(current_city_row, route)
-            current_city = warmest
-            route.append(current_city)
-        return route
+
