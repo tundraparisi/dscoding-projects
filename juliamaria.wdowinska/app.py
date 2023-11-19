@@ -1,6 +1,6 @@
 import joblib
 import streamlit as st
-from UDFs import TextPreprocessor, TextClassifier
+from UDFs import TextClassifier
 
 # Load the trained vectorizer and classifiers
 count_vectorizer = joblib.load('count_vectorizer.joblib')
