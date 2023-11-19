@@ -22,21 +22,6 @@ The project is structured as follows:
 
 - **app.py**: Script for the Streamlit web application. Users can input a text, choose a classifier and vectorizer, and the app predicts whether the text is humorous or not.
 
-## Usage
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/your-username/humor-detection.git
-   cd humor-detection
-
-2. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-
-2. **Run the App**
-   ```bash
-   streamlit run app.py
-
 ## Humor Detection App
 
 The Humor Detection App allows users to interactively predict the humor in a given text. Users can choose between different classifiers (Logistic Regression or Multinomial Naive Bayes) and vectorizers (Count Vectorizer or TF-IDF Vectorizer). The app leverages machine learning models trained on a dataset of 200,000 observations to provide predictions.
@@ -45,9 +30,9 @@ The Humor Detection App allows users to interactively predict the humor in a giv
 
 For reference, here are some sample texts with corresponding labels:
 
-(H) Why don't Calculus majors throw house parties? Because you should never drink and derive.
-(H) What did the shark say when he ate the clownfish? This tastes a little funny.
-(NH) There were some heated exchanges on Ukraine and China, but strict moderation limited direct clashes.
-(NH) Brazilian authorities made two arrests and carried out raids in key cities, including Sao Paulo and Brasilia.
+(H) Why don't Calculus majors throw house parties? Because you should never drink and derive.  
+(H) What did the shark say when he ate the clownfish? This tastes a little funny.  
+(NH) There were some heated exchanges on Ukraine and China, but strict moderation limited direct clashes.  
+(NH) Brazilian authorities made two arrests and carried out raids in key cities, including Sao Paulo and Brasilia.  
 
 Feel free to explore the app and experiment with different texts and configurations!
