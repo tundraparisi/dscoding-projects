@@ -12,15 +12,19 @@ The project utilizes a dataset with 200,000 observations, each containing a text
 
 The project is structured as follows:
 
-- **main.py**: Script for loading and preprocessing data, vectorizing text using Count Vectorizer and TF-IDF Vectorizer, training and evaluating two machine learning models (Multinomial Naive Bayes and Logistic Regression with Stochastic Gradient Descent), and saving the trained vectorizers and models.
+- **main.py**: Script for:
+  - loading and visualizing data,
+  - preprocessing and vectorizing text using Count Vectorizer and TF-IDF Vectorizer,
+  - training and evaluating two machine learning models, i.e., Multinomial Naive Bayes and Logistic Regression with Stochastic Gradient Descent,
+  - saving the trained vectorizers and models.
 
 - **main-jupyter.ipynb**: Jupyter Notebook version of `main.py`.
 
-- **UDFs.py**: Script containing two classes for text preprocessing and classification. 
-  - `TextPreprocessor`: Class for cleaning and preprocessing text data.
-  - `TextClassifier`: Class for text classification using pre-trained models.
+- **UDFs.py**: Script containing two classes:
+  - `TextPreprocessor`: class for preprocessing text data.
+  - `TextClassifier`: class for text classification using pre-trained models.
 
-- **app.py**: Script for the Streamlit web application.
+- **app.py**: Script for the Humor Detection App.
 
 ## Humor Detection App
 
