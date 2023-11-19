@@ -135,9 +135,7 @@ class Quiz:
 
         st.pyplot(fig)
 
-
     def quiz_game(self):
-        difficulty_levels = ['easy', 'medium', 'hard']
         total_score = 0
         used_questions = []
 
@@ -172,6 +170,7 @@ class Quiz:
 
                         if question_info is not None and question_info['question'] not in used_questions:
                             used_questions.append(question_info['question'])
+                        
                             break
 
                     st.write(question_info['question'])
@@ -181,24 +180,25 @@ class Quiz:
 
                     # Providing a unique key for st.radio
                     radio_key = f"radio_{i}"  # Using a unique identifier for each iteration
-                    user_choice = st.radio("Choose your answer:", list(question_info['options'].keys()), key=radio_key, index= None)
-                    
+                    user_choice = st.radio("Choose your answer:", list(question_info['options'].keys()), key=radio_key, index=None, horizontal=True)
+
                     # Convert correct answer to letter format
                     correct_answer_index = list(question_info['options'].keys()).index(question_info['correct_answer'])
                     correct_answer_letter = chr(ord('A') + correct_answer_index)
 
-                    is_correct = user_choice == correct_answer_letter
+                    if user_choice is not None:
+                        is_correct = user_choice == correct_answer_letter
 
-                    if is_correct:
-                        st.write("Correct!")
-                    else:
-                        st.write(f"Wrong! The correct answer is: {question_info['correct_answer']}")
+                        if is_correct:
+                            st.write("Correct!")
+                        else:
+                            st.write(f"Wrong! The correct answer is: {question_info['correct_answer']}")
 
-                    score = self.calculate_score(question_info['difficulty_level'], is_correct)
-                    total_score += score
-                    
-                    st.write(f"Your score for this question: {score}")
-                    st.write("----------------------------")
+                        score = self.calculate_score(question_info['difficulty_level'], is_correct)
+                        total_score += score
+
+                        st.write(f"Your score for this question: {score}")
+                        st.write("----------------------------")
 
                 game_score = (player_name, total_score)
                 self.load_scores('game_scores.json')  # Load existing scores
@@ -218,6 +218,7 @@ class Quiz:
                 st.write(f"Here's how you performed, {player_name}:")
                 self.display_histogram(player_name)
 
-                self.save_scores('game_scores.json') 
+                self.save_scores('game_scores.json')
 
                 return self.game_scores
+
