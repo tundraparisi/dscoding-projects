@@ -621,7 +621,7 @@ class Country(Visualize):
         self.data = self.data[self.data['Country'] != 'Denmark']
         self.data['Country'] = self.data['Country'].str.replace('Burma', 'Myanmar')
         self.data.loc[self.data['Country'] == 'Denmark (Europe)', 'Country'] = 'Denmark'
-        self.data.loc[:,'Continent'] = self.data['Country'].apply(self._country_to_continent)
+        self.data.loc[:,'Continent'] = self.data['Country'].apply(self.country_to_continent)
         self.data.loc[(self.data['Country'] == "Congo (Democratic Republic Of The)") | (self.data['Country'] == "Côte D'Ivoire"), 'Continent'] = 'Africa'
         self.data.loc[self.data['Country'] == 'Bosnia And Herzegovina', 'Continent'] = 'Europe'
         self.data.dropna(subset=['Continent'], inplace=True)
