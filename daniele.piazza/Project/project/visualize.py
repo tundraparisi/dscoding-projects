@@ -62,7 +62,7 @@ class Visualize:
         self._get_theme() 
 
     """
-    Calculate the annual uncertainty for each city/country.
+    Calculate the annual uncertainty for each city/country and save it in the data_year dataframe as a new column.
     Using the formula: sqrt(sum(uncertainty^2))
     """
     def _calculate_annual_uncertainty(self):
@@ -82,6 +82,17 @@ class Visualize:
 
     """
     Get the theme from the streamlit config file.
+
+    Attributes
+    ----------
+    primaryColor : str
+        Primary color for visualization theme
+    backgroundColor : str
+        Background color for visualization theme
+    secondaryBackgroundColor : str
+        Secondary background color for visualization theme
+    textColor : str
+        Text color for visualization theme
     """
     def _get_theme(self):
         config = toml.load('.streamlit/config.toml')
@@ -114,7 +125,8 @@ class Visualize:
         fig.update_mapboxes(bounds_east=180, bounds_west=-180, bounds_north=90, bounds_south=-70)
         fig.update_geos(
             resolution=110,
-            showcountries=True, countrycolor='Black',
+            showcountries=True,
+            countrycolor='Black',
             lataxis = dict(range = [-90, 90]),
             lonaxis = dict(range = [-180, 180]),
             showocean=True, oceancolor=self.backgroundColor,
@@ -204,7 +216,7 @@ class Visualize:
     Parameters
     ----------
     n : int
-        The number of cities to be shown
+        The number of cities to be shown (not supported for countries)
 
     Returns
     -------
@@ -266,15 +278,14 @@ class Visualize:
         The figure with the line chart
     """
     def predict_temperature(self,selected):
-        city_data = self.data_year[(self.data_year[self.label] == selected)]
-        years = city_data['Year'].values.reshape(-1, 1)
-        temperatures = city_data['YearlyAverage'].values
+        place = self.data_year[(self.data_year[self.label] == selected)]
+        years = place['Year'].values.reshape(-1, 1)
+        temperatures = place['YearlyAverage'].values
         poly_reg = PolynomialFeatures(degree=4)
-        years_poly = poly_reg.fit_transform(years)
+        years_poly = poly_reg.fit_transform(years) 
         lin_reg_poly = LinearRegression()
         lin_reg_poly.fit(years_poly, temperatures)
-        range = np.arange(years.max(), years.max()+50)
-        future_years = range.reshape(-1, 1)
+        future_years = np.arange(years.max(), years.max()+50).reshape(-1, 1)
         future_years_poly = poly_reg.transform(future_years)
         predicted_temperatures = lin_reg_poly.predict(poly_reg.transform(years))
         future_predicted_temperatures = lin_reg_poly.predict(future_years_poly)
@@ -289,7 +300,7 @@ class Visualize:
                         line=dict(color=self.primaryColor),
                         name='Polynomial Regression'
                         )
-        fig.add_scatter(x=range,
+        fig.add_scatter(x=future_years.flatten(),
                         y=future_predicted_temperatures,
                         mode='lines', 
                         line=dict(color='red'),
@@ -302,14 +313,14 @@ class Visualize:
     
 
     """
-    Calculate additional statistics about the dataset: average, minimum, maximum and standard deviation of the temperatures for each city/country.
+    Calculate general statistics about the dataset: average, minimum, maximum and standard deviation of the temperatures for each city/country.
 
     Returns
     -------
-    city_stats : pandas.DataFrame
+    stats : pandas.DataFrame
         The dataframe with the statistics
     """
-    def additional_statistics(self):
+    def statistics(self):
         stats = self.data.groupby(self.label).agg(
             AverageTemperature=('AverageTemperature', 'mean'),
             MinTemperature=('AverageTemperature', 'min'),
@@ -361,7 +372,8 @@ class Visualize:
                             )  
         fig.update_layout(xaxis={'tickmode': 'array',
                                  'tickvals':df['Month'].unique(),
-                                 'ticktext': df['Month_Name'].unique()})
+                                 'ticktext': df['Month_Name'].unique()}
+                         )
         fig.update_traces(line=dict(width=2))
         fig.update_xaxes(showgrid=False)
         fig.update_yaxes(showgrid=False)
@@ -442,32 +454,32 @@ class City(Visualize):
                                     'Latitude': False,
                                     'Longitude': False,
                                     'YearlyAverage': False,
-                                    'Size': False
-                                })
+                                    'Size': False}
+                                )
         return self._fig_layout(fig)
     
     #Implement abstract method
     def _temperature_figure(self,df,min,max):
         fig = px.scatter_mapbox(df,
-                        lat='Latitude',
-                        lon='Longitude',
-                        color='YearlyAverage',
-                        hover_name='City_Country',
-                        size='Size',
-                        zoom=1,
-                        animation_frame='Year',
-                        mapbox_style='open-street-map',
-                        template='plotly_dark',
-                        range_color=(min,max),
-                        color_continuous_scale=px.colors.diverging.Portland,
-                        hover_data={
-                            'YearlyAverage': True,
-                            'City_Country': False,
-                            'Year': False,
-                            'Latitude': False,
-                            'Longitude': False,
-                            'Size':False
-                        })
+                                lat='Latitude',
+                                lon='Longitude',
+                                color='YearlyAverage',
+                                hover_name='City_Country',
+                                size='Size',
+                                zoom=1,
+                                animation_frame='Year',
+                                mapbox_style='open-street-map',
+                                template='plotly_dark',
+                                range_color=(min,max),
+                                color_continuous_scale=px.colors.diverging.Portland,
+                                hover_data={
+                                    'YearlyAverage': True,
+                                    'City_Country': False,
+                                    'Year': False,
+                                    'Latitude': False,
+                                    'Longitude': False,
+                                    'Size':False}
+                                )
         return self._fig_layout(fig)
     
     """
@@ -491,14 +503,15 @@ class City(Visualize):
                                 hover_name='City_Country',
                                 mapbox_style='open-street-map', 
                                 animation_group='City_Country',
-                                color_continuous_scale=px.colors.diverging.Portland,opacity=0.8,template='plotly_dark',
+                                color_continuous_scale=px.colors.diverging.Portland,opacity=0.8,
+                                template='plotly_dark',
                                 hover_data={
                                     'YearlyAverage': True,
                                     'City_Country': False,
                                     'Year': False,
                                     'Latitude': False,
-                                    'Longitude': False,
-                                })
+                                    'Longitude': False}
+                                )
         return self._fig_layout(fig)
     
     """
@@ -512,9 +525,12 @@ class City(Visualize):
     def show_locations(self):
         city = self.data.groupby('City').first().reset_index()
         fig = px.scatter_mapbox(city,
-                    lat='Latitude',
-                    lon='Longitude',
-                    hover_name='City',mapbox_style='open-street-map',zoom=1)
+                                lat='Latitude',
+                                lon='Longitude',
+                                hover_name='City',
+                                mapbox_style='open-street-map',
+                                zoom=1
+                                )
         fig.update_geos(
             visible=True, resolution=50,
             showcountries=True, countrycolor='RebeccaPurple'
@@ -543,14 +559,15 @@ class City(Visualize):
                                 hover_name='City_Country',
                                 mapbox_style='open-street-map',
                                 zoom=7,
-                                center={'lat': filtered_data['Latitude'].iloc[0], 'lon': filtered_data['Longitude'].iloc[0]},
+                                center={'lat': filtered_data['Latitude'].iloc[0],
+                                        'lon': filtered_data['Longitude'].iloc[0]},
                                 size='Size',
                                 hover_data={
                                     'City_Country': False,
                                     'Latitude': False,
                                     'Longitude': False,
-                                    'Size': False
-                                })
+                                    'Size': False}
+                                )
         fig.update_geos(
             visible=True,
             resolution=50,
@@ -643,26 +660,26 @@ class Country(Visualize):
                             hover_data={
                                 'YearlyAverage': True,
                                 'Country': False,
-                                'Year': False
-                                })
+                                'Year': False}
+                            )
         fig.update_layout(dragmode=False)
         return self._fig_layout(fig)
     
     #Implement abstract method
     def _range_figure(self,df,min,max):
         fig = px.choropleth(df,
-                        locations='Country',
-                        locationmode='country names',
-                        color='Range',
-                        color_continuous_scale=px.colors.diverging.Portland,
-                        animation_frame='Year',
-                        hover_name='Country',
-                        range_color=(min, max),
-                        hover_data={
-                            'Country': False,
-                            'Year': False,
-                            'YearlyAverage': False
-                        })
+                            locations='Country',
+                            locationmode='country names',
+                            color='Range',
+                            color_continuous_scale=px.colors.diverging.Portland,
+                            animation_frame='Year',
+                            hover_name='Country',
+                            range_color=(min, max),
+                            hover_data={
+                                'Country': False,
+                                'Year': False,
+                                'YearlyAverage': False}
+                            )
         fig.update_layout(dragmode=False)
         return self._fig_layout(fig)
     
