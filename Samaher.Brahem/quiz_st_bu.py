@@ -109,32 +109,36 @@ class Quiz:
 
     def display_histogram(self, player_name):
         player_scores = {name: score for name, score in self.game_scores}
+        plt.figure(figsize=(10, 6), dpi=80)
+
+        # Extract player names and scores
         names = list(player_scores.keys())
         scores = list(player_scores.values())
 
+        # Get indices to sort scores in descending order
         sorted_indices = np.argsort(scores)[::-1]
+
+        # Rearrange names and scores based on sorted indices
         names = [names[i] for i in sorted_indices]
         scores = [scores[i] for i in sorted_indices]
 
-        fig, ax = plt.subplots(figsize=(10, 6), dpi=80)
+        # Plotting player scores
+        bars = plt.bar(names, scores, color='#202060')
 
-        bars = ax.bar(names, scores, color='#202060')
-
+        # Highlight the current player's score in a different color and add data label
         if player_name in player_scores:
             index = names.index(player_name)
             bars[index].set_color('#5bc8af')
-            ax.text(index, scores[index], str(scores[index]), ha='center', va='bottom', fontname='Quicksand', fontsize=10)
+            plt.text(index, scores[index], str(scores[index]), ha='center', va='bottom', fontname='Quicksand', fontsize=10)
 
-        ax.set_xlabel('Players', fontname='Quicksand', fontsize=12)
-        ax.set_ylabel('Scores', fontname='Quicksand', fontsize=12)
-        ax.set_title('Players\' Scores Distribution', fontname='Quicksand', fontsize=16)
-        plt.xticks(rotation=45, fontname='Quicksand', fontsize=10)
+        plt.xlabel('Players', fontname='Quicksand', fontsize=12)
+        plt.ylabel('Scores', fontname='Quicksand', fontsize=12)
+        plt.title('Players\' Scores Distribution', fontname='Quicksand', fontsize=16)
+        plt.xticks(rotation=45, fontname='Quicksand', fontsize=10)  # Rotate x-axis labels for readability
         plt.yticks(fontname='Quicksand', fontsize=10)
-        ax.grid(axis='y')
+        plt.grid(axis='y')  # Show grid lines only for y-axis
         plt.tight_layout()
-
-        st.pyplot(fig)
-
+        plt.show()
 
     def quiz_game(self):
         difficulty_levels = ['easy', 'medium', 'hard']
@@ -152,6 +156,10 @@ class Quiz:
                 st.write("----------------------------")
 
                 user_difficulty = difficulty_level.lower()
+
+                while user_difficulty not in difficulty_levels:
+                    st.write("Invalid difficulty level. Please choose from: easy, medium, hard")
+                    user_difficulty = st.selectbox("Choose a difficulty level:", difficulty_levels).lower()
 
                 question_generators = [
                     {'generator': self.generate_question, 'params': ('When was this movie released? ==> ', 'year')},
@@ -179,24 +187,19 @@ class Quiz:
                     for letter, option in question_info['options'].items():
                         st.write(f"{letter}. {option}")
 
-                    # Providing a unique key for st.radio
-                    radio_key = f"radio_{i}"  # Using a unique identifier for each iteration
+                    # Provide a unique key for st.radio
+                    radio_key = f"radio_{i}"  # Use a unique identifier for each iteration
                     user_choice = st.radio("Choose your answer:", list(question_info['options'].keys()), key=radio_key, index= None)
                     
-                    # Convert correct answer to letter format
-                    correct_answer_index = list(question_info['options'].keys()).index(question_info['correct_answer'])
-                    correct_answer_letter = chr(ord('A') + correct_answer_index)
-
-                    is_correct = user_choice == correct_answer_letter
+                    is_correct = user_choice == question_info['correct_answer']
+                    score = self.calculate_score(question_info['difficulty_level'], is_correct)
+                    total_score += score
 
                     if is_correct:
                         st.write("Correct!")
                     else:
                         st.write(f"Wrong! The correct answer is: {question_info['correct_answer']}")
 
-                    score = self.calculate_score(question_info['difficulty_level'], is_correct)
-                    total_score += score
-                    
                     st.write(f"Your score for this question: {score}")
                     st.write("----------------------------")
 
