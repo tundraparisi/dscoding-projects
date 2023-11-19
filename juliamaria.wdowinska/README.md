@@ -20,13 +20,11 @@ The project is structured as follows:
   - `TextPreprocessor`: Class for cleaning and preprocessing text data.
   - `TextClassifier`: Class for text classification using pre-trained models.
 
-- **app.py**: Script for the Streamlit web application. Users can input a text, choose a classifier and vectorizer, and the app predicts whether the text is humorous or not.
+- **app.py**: Script for the Streamlit web application.
 
 ## Humor Detection App
 
-The Humor Detection App allows users to interactively predict the humor in a given text. Users can choose between different classifiers (Logistic Regression or Multinomial Naive Bayes) and vectorizers (Count Vectorizer or TF-IDF Vectorizer). The app leverages machine learning models trained on a dataset of 200,000 observations to provide predictions.
-
-## Sample Texts
+The Humor Detection App allows users to interactively predict the humor in a given text. Users can choose between different classifiers (Logistic Regression or Multinomial Naive Bayes) and vectorizers (Count Vectorizer or TF-IDF Vectorizer). The app leverages machine learning models trained on a dataset of 200,000 observations to provide predictions.  
 
 For reference, here are some sample texts with corresponding labels:
 
