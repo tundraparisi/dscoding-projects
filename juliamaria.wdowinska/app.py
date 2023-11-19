@@ -1,6 +1,6 @@
 import joblib
 import streamlit as st
-from UDFs import TextPreprocessor
+from UDFs import TextPreprocessor, TextClassifier
 
 # Load the trained vectorizer and classifiers
 count_vectorizer = joblib.load('count_vectorizer.joblib')
@@ -29,8 +29,8 @@ st.markdown("""
 # App title and description
 st.title('Humor Detection App')
 st.markdown('''
-            This app uses a machine learning classifier to predict if your text is humorous or not.  
-            You have the possibility to choose between two classifiers:  
+            This app uses machine learning classifiers to predict if your text is humorous or not.  
+            You can choose between two classifiers:  
             - Logistic Regression with Stochastic Gradient Descent,  
             - Multinomial Naive Bayes,
             ''')
@@ -56,109 +56,24 @@ user_vectorizer = st.selectbox(label = 'Select vectorizer:', index = 0,
 # User enters text for classification
 user_text_input = st.text_input(label = 'Enter text:')
 
-# Preprocess user input, vectorize, and predict humor using Logistic Regression with CountVectorizer
-if user_classifier == 'Logistic Regression with Stochastic Gradient Descent'\
-      and user_vectorizer == 'Count Vectorizer'\
-            and user_text_input:
-      
-      try:
-            # Preprocess and vectorize user input text
-            text_preprocessor = TextPreprocessor()
-            preprocessed_user_text = count_vectorizer.transform([text_preprocessor.preprocess(user_text_input)])
-            
-            # Perform classification
-            humor_prediction = lr_classifier_count_vectorized.predict(preprocessed_user_text)
-            humor_probability = lr_classifier_count_vectorized.predict_proba(preprocessed_user_text)
-            
-            # Display classification result
-            result_message = 'Your text is humorous.' if humor_prediction[0] == 1 else 'Your text is unhumorous.'
-            st.write(result_message)
+# Create instances of TextClassifier
+lr_count_classifier = TextClassifier(lr_classifier_count_vectorized, count_vectorizer)
+lr_tfidf_classifier = TextClassifier(lr_classifier_tfidf_vectorized, tfidf_vectorizer)
+mnb_count_classifier = TextClassifier(mnb_classifier_count_vectorized, count_vectorizer)
+mnb_tfidf_classifier = TextClassifier(mnb_classifier_tfidf_vectorized, tfidf_vectorizer)
 
-            # Display probability of being humorous
-            st.write(f'Probability of being humorous: {humor_probability[0][1]:.2f}')
-            
-      except Exception as e:
-            
-            # Handle errors
-            st.error(f"An error occurred during classification: {e}")
+# Use instances for classification
+if user_classifier == 'Logistic Regression with Stochastic Gradient Descent' and user_text_input:
+    if user_vectorizer == 'Count Vectorizer':
+        lr_count_classifier.classify_and_display(user_text_input)
+    elif user_vectorizer == 'TF-IDF Vectorizer':
+        lr_tfidf_classifier.classify_and_display(user_text_input)
 
-# Preprocess user input, vectorize, and predict humor using Logistic Regression with TF-IDF Vectorizer
-if user_classifier == 'Logistic Regression with Stochastic Gradient Descent'\
-      and user_vectorizer == 'TF-IDF Vectorizer'\
-            and user_text_input:
-      
-      try:
-            # Preprocess and vectorize user input text
-            text_preprocessor = TextPreprocessor()
-            preprocessed_user_text = tfidf_vectorizer.transform([text_preprocessor.preprocess(user_text_input)])
-            
-            # Perform classification
-            humor_prediction = lr_classifier_tfidf_vectorized.predict(preprocessed_user_text)
-            humor_probability = lr_classifier_tfidf_vectorized.predict_proba(preprocessed_user_text)
-            
-            # Display classification result
-            result_message = 'Your text is humorous.' if humor_prediction[0] == 1 else 'Your text is unhumorous.'
-            st.write(result_message)
-
-            # Display probability of being humorous
-            st.write(f'Probability of being humorous: {humor_probability[0][1]:.2f}')
-            
-      except Exception as e:
-            
-            # Handle errors
-            st.error(f"An error occurred during classification: {e}")
-
-# Preprocess user input, vectorize, and predict humor using Multinomial Naive Bayes with CountVectorizer
-if user_classifier == 'Multinomial Naive Bayes'\
-      and user_vectorizer == 'Count Vectorizer'\
-            and user_text_input:
-      
-      try:
-            # Preprocess and vectorize user input text
-            text_preprocessor = TextPreprocessor()
-            preprocessed_user_text = count_vectorizer.transform([text_preprocessor.preprocess(user_text_input)])
-            
-            # Perform classification
-            humor_prediction = mnb_classifier_count_vectorized.predict(preprocessed_user_text)
-            humor_probability = mnb_classifier_count_vectorized.predict_proba(preprocessed_user_text)
-            
-            # Display classification result
-            result_message = 'Your text is humorous.' if humor_prediction[0] == 1 else 'Your text is unhumorous.'
-            st.write(result_message)
-
-            # Display probability of being humorous
-            st.write(f'Probability of being humorous: {humor_probability[0][1]:.2f}')
-            
-      except Exception as e:
-            
-            # Handle errors
-            st.error(f"An error occurred during classification: {e}")
-
-# Preprocess user input, vectorize, and predict humor using Multinomial Naive Bayes Vectorizer
-if user_classifier == 'Multinomial Naive Bayes'\
-      and user_vectorizer == 'TF-IDF Vectorizer'\
-            and user_text_input:
-      
-      try:
-            # Preprocess and vectorize user input text
-            text_preprocessor = TextPreprocessor()
-            preprocessed_user_text = tfidf_vectorizer.transform([text_preprocessor.preprocess(user_text_input)])
-            
-            # Perform classification
-            humor_prediction = mnb_classifier_tfidf_vectorized.predict(preprocessed_user_text)
-            humor_probability = mnb_classifier_tfidf_vectorized.predict_proba(preprocessed_user_text)
-            
-            # Display classification result
-            result_message = 'Your text is humorous.' if humor_prediction[0] == 1 else 'Your text is unhumorous.'
-            st.write(result_message)
-
-            # Display probability of being humorous
-            st.write(f'Probability of being humorous: {humor_probability[0][1]:.2f}')
-            
-      except Exception as e:
-            
-            # Handle errors
-            st.error(f"An error occurred during classification: {e}")
+elif user_classifier == 'Multinomial Naive Bayes' and user_text_input:
+    if user_vectorizer == 'Count Vectorizer':
+        mnb_count_classifier.classify_and_display(user_text_input)
+    elif user_vectorizer == 'TF-IDF Vectorizer':
+        mnb_tfidf_classifier.classify_and_display(user_text_input)
 
 # Sample texts for reference
 st.markdown('''
